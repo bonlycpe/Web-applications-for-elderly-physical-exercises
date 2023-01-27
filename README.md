@@ -1,7 +1,5 @@
-# Web-applications-for-elderly-physical-exercises 
-Web applications for elderly physical exercises project in Management of Information Technology Class \n
-
-⚠️ this project is in progress...
+# Web-applications-for-elderly-physical-exercises [ ⚠️ this project is in progress... ]
+Web applications for elderly physical exercises project in Management of Information Technology Class
 
 Objective of this project
 
