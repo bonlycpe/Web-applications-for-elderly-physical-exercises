@@ -1,8 +1,6 @@
 work in progress...
 ===========================
-* update 230129
-- training module 
-	- automate training add
-- testing module 
-	- default testing add
+230129
+- update training module
+- update testing module
 ===========================
