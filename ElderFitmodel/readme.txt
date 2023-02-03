@@ -4,6 +4,3 @@ work in progress...
 - update training module
 - update testing module
 ===========================
-230131
-- update algorithm to training module
-===========================
