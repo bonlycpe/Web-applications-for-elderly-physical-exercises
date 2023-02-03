@@ -4,3 +4,6 @@ work in progress...
 - update training module
 - update testing module
 ===========================
+230203
+- update handupmodel(prototype)
+===========================
