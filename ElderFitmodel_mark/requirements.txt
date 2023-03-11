@@ -1,0 +1,11 @@
+opencv-python
+os-sys
+pandas
+pickle5
+numpy
+mediapipe
+DateTime
+pytest-shutil
+scikit-learn
+flask
+
