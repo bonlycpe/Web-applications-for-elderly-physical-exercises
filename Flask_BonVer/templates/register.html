@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/register.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="video"></div>
+      <div class="fill">
+        <div class="box">
+          <h1>สร้างบัญชีผู้ใช้</h1>
+          <form action="register" method="post">
+            {% if mesage is defined and mesage %}
+            <div class="alert alert-warning">{{ mesage }}</div>
+            {% endif %}
+            <div class="username">
+              <h2>ชื่อ</h2>
+              <input type="text" id="name" name="name" required />
+            </div>
+            <div class="username">
+              <h2>นามสกุล</h2>
+              <input
+                type="text"
+                id="surname"
+                name="surname"
+                required="required"
+              />
+            </div>
+            <div class="username">
+              <h2>อายุ</h2>
+              <input type="text" id="age" name="age" required />
+            </div>
+            <div class="username">
+              <h2>ส่วนสูง</h2>
+              <input type="text" id="height" name="height" required />
+            </div>
+            <div class="username">
+              <h2>อีเมลผู้ใช้</h2>
+              <input type="text" id="email" name="email" required />
+            </div>
+            <div class="username">
+              <h2>ชื่อผู้ใช้</h2>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                required="required"
+              />
+            </div>
+            <div class="username">
+              <h2>รหัสผ่าน</h2>
+              <input type="password" id="password" name="password" required />
+            </div>
+            <div class="username">
+              <h2>ยืนยันรหัสผ่าน</h2>
+              <input
+                type="password"
+                id="password_confirm"
+                name="password_confirm"
+                required
+              />
+            </div>
+            <div class="btn">
+              <button class="login-btn" id="send_button" type="submit">
+                ลงทะเบียน
+              </button>
+              <div class="register-btn">
+                <a href="/">กลับ</a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

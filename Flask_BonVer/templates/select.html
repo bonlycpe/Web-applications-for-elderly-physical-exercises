@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/select.css') }}"
+    />
+  </head>
+  <body>
+    <div class="precontainer"><a href="/index" class="back">กลับ</a></div>
+
+    <div class="container">
+      <div class="main-box">
+        <div class="main-box1">
+          <div class="image">
+            <a href="preview">
+              <button type="button" class="btn">
+                <div class="inside-circle">
+                  <div class="triangle"></div>
+                </div>
+                <a>เริ่ม</a>
+              </button>
+            </a>
+          </div>
+        </div>
+
+        <div class="main-box2">
+          <div class="about-content">
+            <div class="about-head" id="selectedCourse" data-myval="">
+              <a>Set ที่เลือก</a>
+            </div>
+            <div class="about-body">
+              <ul>
+                {% for row in course %}
+                <li>ท่า {{row.0}}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="select-box">
+        {% for row in course %}
+        <div class="select1">
+          <div class="set-img" id="selectedBox" data-myval="{{row.0}}"></div>
+          <a>Set {{row.0}} (05:00 นาที)</a>
+        </div>
+        {% endfor %}
+
+        <div class="next"></div>
+      </div>
+    </div>
+  </body>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script type="text/javascript">
+    var data = $("#selectedBox").data("myval"); //getter
+    $("#selectedCourse").data("myval", data);
+    console.log(data);
+  </script>
+</html>
