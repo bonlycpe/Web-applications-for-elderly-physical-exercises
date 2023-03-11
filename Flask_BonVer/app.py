@@ -11,13 +11,10 @@ from script import camera_processing
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'x123'
-app.config["JWT_SECRET_KEY"] = "super-secret"  # Change this!
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(seconds=20)
-app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'itmdb'
+app.config['MYSQL_DB'] = 'itmdb' #name DB
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
@@ -189,21 +186,57 @@ def saveProfile():
         mesage = 'Please fill out the form !'
     return redirect('/editProfile')
 
-@app.route("/select")
+@app.route("/select",methods=['POST','GET'])
 def select():
+    courseId = 1
     cur = mysql.connection.cursor()
     cur.execute("select distinct c.name from course c inner join posture p on p.postureID=c.posture1ID or p.postureID=c.posture2ID")
     fetchdata = cur.fetchall()
+    cur.execute("select distinct c.name,c.posture1ID,c.posture2ID from course c inner join posture p on p.postureID=c.posture1ID or p.postureID=c.posture2ID where c.courseID="+str(courseId))
+    courseSelected = cur.fetchall()
+    cur.execute("select p.name from posture p where p.postureID="+str(courseSelected[0][1]))
+    course1 = cur.fetchall()
+    cur.execute("select p.name from posture p where p.postureID="+str(courseSelected[0][2]))
+    course2 = cur.fetchall()
     cur.close()
-    return render_template('select.html',course = fetchdata)
+    courseNameSelected = [course1[0],course2[0]]
+    return render_template('select.html',course = fetchdata,courseSelected = courseSelected,courseNameSelected = courseNameSelected)
 
-@app.route("/preview")
-def preview():
-    return render_template('preview.html')
+@app.route("/select/<courseName>",methods=['POST','GET'])
+def seletedCourse(courseName):
+    cur = mysql.connection.cursor()
+    cur.execute("select distinct c.name from course c inner join posture p on p.postureID=c.posture1ID or p.postureID=c.posture2ID")
+    fetchdata = cur.fetchall()
+    cur.execute("select distinct c.name,c.posture1ID,c.posture2ID from course c inner join posture p on p.postureID=c.posture1ID or p.postureID=c.posture2ID where c.name='"+str(courseName)+"'")
+    courseSelected = cur.fetchall()
+    cur.execute("select p.name from posture p where p.postureID="+str(courseSelected[0][1]))
+    course1 = cur.fetchall()
+    cur.execute("select p.name from posture p where p.postureID="+str(courseSelected[0][2]))
+    course2 = cur.fetchall()
+    cur.close()
+    courseNameSelected = [course1[0],course2[0]]
+    return render_template('selectedCourse.html',courseSelected = courseSelected,courseNameSelected = courseNameSelected)
 
-@app.route("/play",methods=['POST','GET'])
-def play():
-    return render_template('play.html')
+@app.route("/preview/<courseName>",methods=['POST','GET'])
+def preview(courseName):
+    cur = mysql.connection.cursor()
+    cur.execute("select distinct c.name,c.posture1ID,c.posture2ID from course c inner join posture p on p.postureID=c.posture1ID or p.postureID=c.posture2ID where c.name='"+str(courseName)+"'")
+    courseSelected = cur.fetchall()
+    cur.execute("select p.name from posture p where p.postureID="+str(courseSelected[0][1]))
+    course1 = cur.fetchall()
+    cur.execute("select p.name from posture p where p.postureID="+str(courseSelected[0][2]))
+    course2 = cur.fetchall()
+    cur.close()
+    courseNameSelected = [course1[0],course2[0]]
+    return render_template('preview.html',courseSelected = courseSelected,courseNameSelected = courseNameSelected)
+
+@app.route("/playtask1/<courseName>",methods=['POST','GET'])
+def playtask1(courseName):
+    return render_template('play.html',courseName=courseName)
+
+@app.route("/playtask2/<courseName>",methods=['POST','GET'])
+def playtask2(courseName):
+    return render_template('play2.html')
     
 @app.route('/video_feed')
 def video_feed():

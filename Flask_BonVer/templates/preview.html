@@ -8,33 +8,46 @@
     />
   </head>
   <body>
-    <div class="precontainer"><a href="index" class="back">กลับ</a></div>
+    <div class="precontainer">
+      <button type="button" id="back" class="back">กลับ</button>
+    </div>
 
     <div class="container">
       <div class="main-box1">
-        <div class="image"><img src="{{ url_for('video_feed') }}" /></div>
+        <div class="image"></div>
       </div>
       <div class="main-box2">
         <div class="about-content">
-          <div class="about-head"><a>Set A (05:00 นาที)</a></div>
+          {% for row in courseSelected %}
+          <input type="hidden" id="nameCourse" value="{{row.0}}" />
+          <div class="about-head"><a>Set {{row.0}} (05:00 นาที)</a></div>
+          {% endfor %}
           <div class="about-body">
             <ul>
-              <li>ท่าแกว่างแขน</li>
-              <li>ท่าแกว่างขา</li>
-              <li>ท่าม้วนไหล่</li>
+              {% for row in courseNameSelected %}
+              <li>{{row.0}}</li>
+              {% endfor %}
             </ul>
           </div>
         </div>
         <div class="next"></div>
-        <a href="play">
-          <button type="button" class="btn">
-            <div class="inside-circle">
-              <div class="triangle"></div>
-            </div>
-            <a>เริ่ม</a>
-          </button>
-        </a>
+        <button type="button" id="start" class="btn">
+          <div class="inside-circle">
+            <div class="triangle"></div>
+          </div>
+          <a>เริ่ม</a>
+        </button>
       </div>
     </div>
   </body>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script type="text/javascript">
+    $("#back").click(function () {
+      window.location = "/select";
+    });
+    $("#start").click(function () {
+      var data = document.getElementById("nameCourse").value;
+      window.location = "/playtask1/" + data;
+    });
+  </script>
 </html>
