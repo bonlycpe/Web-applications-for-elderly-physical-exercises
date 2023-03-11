@@ -24,39 +24,34 @@
             </a>
           </div>
         </div>
-
         <div class="main-box2">
           <div class="about-content">
-            <div class="about-head" id="selectedCourse" data-myval="">
-              <a>Set ที่เลือก</a>
-            </div>
+            <div class="about-head"><a>Set A (05:00 นาที)</a></div>
             <div class="about-body">
               <ul>
-                {% for row in course %}
-                <li>ท่า {{row.0}}</li>
-                {% endfor %}
+                <li>ท่าแกว่างแขน</li>
+                <li>ท่าแกว่างขา</li>
+                <li>ท่าม้วนไหล่</li>
               </ul>
             </div>
           </div>
         </div>
       </div>
-
       <div class="select-box">
-        {% for row in course %}
         <div class="select1">
-          <div class="set-img" id="selectedBox" data-myval="{{row.0}}"></div>
-          <a>Set {{row.0}} (05:00 นาที)</a>
+          <div class="set-img"></div>
+          <a>Set A (05:00 นาที)</a>
         </div>
-        {% endfor %}
-
+        <div class="select1">
+          <div class="set-img"></div>
+          <a>Set B (05:00 นาที)</a>
+        </div>
+        <div class="select1">
+          <div class="set-img"></div>
+          <a>Set C (05:00 นาที)</a>
+        </div>
         <div class="next"></div>
       </div>
     </div>
   </body>
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script type="text/javascript">
-    var data = $("#selectedBox").data("myval"); //getter
-    $("#selectedCourse").data("myval", data);
-    console.log(data);
-  </script>
 </html>
