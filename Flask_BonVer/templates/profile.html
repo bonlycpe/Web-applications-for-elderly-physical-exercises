@@ -2,47 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='css/profile.css') }}"
+      href="{{ url_for('static', filename='css/select.css') }}"
     />
   </head>
   <body>
-    {% for row in user %}
-    <h1>ชื่อ : {{row.0}} นามสกุล : {{row.1}}</h1>
-    <h1>อายุ : {{row.2}}</h1>
-    <h1>ส่วนสูง : {{row.3}}</h1>
-    {% endfor %}
-    <h1>ตารางการออกกำลังกายของสัปดาห์นี้</h1>
-    <div style="height: 50vh; width: 50%">
-      <canvas id="myChart"></canvas>
-    </div>
-    <a href="editProfile" class="back">แก้ไขข้อมูล</a>
-    <a href="index" class="back">กลับ</a>
+    <
   </body>
-  <script>
-    const labels = {{ labels | tojson}};
-
-    const data = {
-        labels: labels,
-        datasets: [{
-            label: 'Scores',
-            backgroundColor: 'rgb(255, 99, 132)',
-            borderColor: 'rgb(255, 99, 132)',
-            data: {{ data | tojson}},
-        }]
-    };
-
-    const config = {
-        type: 'line',
-        data: data,
-        options: { maintainAspectRatio: false }
-    };
-
-    const myChart = new Chart(
-        document.getElementById('myChart'),
-        config
-    );
-  </script>
 </html>

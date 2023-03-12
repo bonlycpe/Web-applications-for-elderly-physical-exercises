@@ -6,7 +6,8 @@ from flask_mysqldb import MySQL
 from datetime import datetime, timedelta
 from functools import wraps
 from datetime import datetime, date
-from script import camera_processing
+import pickle
+import cv2
 
 app = Flask(__name__)
 
@@ -232,17 +233,92 @@ def preview(courseName):
 
 @app.route("/playtask1/<courseName>",methods=['POST','GET'])
 def playtask1(courseName):
-    return render_template('play.html',courseName=courseName)
+    return render_template('play.html',courseName=courseName,count = count)
+
+@app.route('/exercise',methods=['POST','GET'])
+def exercise():
+    return render_template('count.html',count=count)
 
 @app.route("/playtask2/<courseName>",methods=['POST','GET'])
 def playtask2(courseName):
     return render_template('play2.html')
+
+import mediapipe as mp
+import pandas as pd
+import pickle 
+
+model=pickle.load(open("handup_model.pkl", 'rb'))
+
+# Grabbing the Holistic Model from Mediapipe and
+mp_holistic = mp.solutions.holistic
+
+# Initializing the Model
+holistic_model = mp_holistic.Holistic(
+    min_detection_confidence=0.5,
+    min_tracking_confidence=0.5
+)
+ 
+# Initializing the drawing utils for drawing the facial landmarks on image
+mp_drawing = mp.solutions.drawing_utils
+mp_drawing_styles = mp.solutions.drawing_styles
+
+count = 0
+stage = 0
+
+def gen():
+    global count
+    global stage
+
+    cap = cv2.VideoCapture(0)
+
+    while cap.isOpened():
+        rat, frame = cap.read()
+
+        # resizing the frame for better view
+        frame = cv2.resize(frame, (860,645))
+    
+        # Converting the from BGR to RGB
+        image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+        image.flags.writeable = False
+
+        results = holistic_model.process(image)
+
+        image.flags.writeable = True
+    
+        # Converting back the RGB image to BGR
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+
+        try:
+            pose = results.pose_landmarks.landmark
+            pose_row = list(np.array([[landmark.x,landmark.y,landmark.z,landmark.visibility] for landmark in pose]).flatten())
+
+            # Make Detections
+            X = pd.DataFrame([pose_row])
+            predict_class = model.predict(X)[0]
+            predict_prob = model.predict_proba(X)[0]
+            str_count = f"{count}"
+            
+            if(stage == 0 and predict_class=="left_hand" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.75):
+                stage = 1
+            elif(stage == 1 and predict_class=="right_hand" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.75):
+                count+=1
+                stage = 0
+        
+        except:
+            cv2.putText(image, str('out of frame')
+                        , (210,150), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
+
+        frame = cv2.imencode('.jpeg', image)[1].tobytes()
+        yield (b'--frame\r\n'
+                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
     
 @app.route('/video_feed')
 def video_feed():
     """Video streaming route. Put this in the src attribute of an img tag."""
-    return Response(camera_processing(),
+    return Response(gen(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
+
 
 if __name__=="__main__":
     app.run(host='localhost', port=5000, debug=True)

@@ -12,7 +12,7 @@
       type="hidden"
       id="nameCourse"
       value="{{courseName.0}}{{courseName.1}}"
-    />
+    /> <div style="font-size: 50px;" id="count">{{count}}</div>
     <div class="container">
       <div class="box1"></div>
       <div class="box2">
@@ -33,6 +33,23 @@
     $("button").click(function () {
       var data = document.getElementById("nameCourse").value;
       window.location = "/playtask2/" + data;
+    });
+  </script>
+  <script>
+    $(function(){
+      window.setInterval(function(){
+      load()
+    },1000)
+    function load(){
+        $.ajax({
+          url:"/exercise",
+          type:"GET",
+            success: function(response){
+              $("#count").empty();
+              $("#count").html(response);
+            }
+        });
+      }
     });
   </script>
 </html>
