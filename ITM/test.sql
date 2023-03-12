@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 06, 2023 at 11:35 AM
+-- Generation Time: Mar 12, 2023 at 02:45 PM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -18,54 +18,94 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `test`
+-- Database: `itmdb`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `activity`
+-- Table structure for table `course`
 --
 
-CREATE TABLE `activity` (
-  `actitvityID` int(11) NOT NULL,
+CREATE TABLE `course` (
+  `courseID` int(11) NOT NULL,
+  `posture1ID` int(10) NOT NULL,
+  `posture2ID` int(10) NOT NULL,
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `activity`
+-- Dumping data for table `course`
 --
 
-INSERT INTO `activity` (`actitvityID`, `name`) VALUES
-(1, 'A'),
-(2, 'B'),
-(3, 'C'),
-(4, 'D');
+INSERT INTO `course` (`courseID`, `posture1ID`, `posture2ID`, `name`) VALUES
+(1, 1, 2, 'ยืดเส้นยืดสายกายใจ'),
+(2, 3, 4, 'เบาสบายกายขยับ');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `historyuseractivity`
+-- Table structure for table `historyusercourse`
 --
 
-CREATE TABLE `historyuseractivity` (
-  `historyUserActivityID` int(11) NOT NULL,
-  `useractivityID` int(11) NOT NULL,
-  `timer` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `progress` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL
+CREATE TABLE `historyusercourse` (
+  `historyUserCourseID` int(11) NOT NULL,
+  `userCourseID` int(11) NOT NULL,
+  `score` int(10) NOT NULL,
+  `reps` int(10) NOT NULL,
+  `date` date NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `historyusercourse`
+--
+
+INSERT INTO `historyusercourse` (`historyUserCourseID`, `userCourseID`, `score`, `reps`, `date`) VALUES
+(1, 1, 50, 22, '2023-03-10'),
+(2, 1, 55, 24, '2023-03-10'),
+(3, 1, 60, 22, '2023-03-10'),
+(4, 1, 70, 34, '2023-03-10'),
+(5, 1, 90, 66, '2023-03-10');
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `useractivity`
+-- Table structure for table `posture`
 --
 
-CREATE TABLE `useractivity` (
-  `userActivityID` int(11) NOT NULL,
+CREATE TABLE `posture` (
+  `postureID` int(11) NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `posture`
+--
+
+INSERT INTO `posture` (`postureID`, `name`) VALUES
+(1, 'แกว่งแขน '),
+(2, 'ย่ำเท้างอขา '),
+(3, 'กางแขนยกมือ '),
+(4, 'กำหมัดยกขา ');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `usercourse`
+--
+
+CREATE TABLE `usercourse` (
+  `userCourseID` int(11) NOT NULL,
   `userID` int(11) NOT NULL,
-  `activityID` int(11) NOT NULL
+  `courseID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `usercourse`
+--
+
+INSERT INTO `usercourse` (`userCourseID`, `userID`, `courseID`) VALUES
+(1, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -80,93 +120,120 @@ CREATE TABLE `users` (
   `password` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `surname` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `age` int(11) NOT NULL
+  `age` int(11) NOT NULL,
+  `height` int(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`userID`, `email`, `username`, `password`, `name`, `surname`, `age`) VALUES
-(2, 'admin', 'admin', 'admin', 'admin', 'admin', 31),
-(3, 'a1', 'a1', 'a1', 'a1', 'a1', 12),
-(4, 'a2', 'a2', 'a2', 'a2', 'a2', 12);
+INSERT INTO `users` (`userID`, `email`, `username`, `password`, `name`, `surname`, `age`, `height`) VALUES
+(2, 'admin', 'admin', 'admin', 'admin', 'admin', 31, 160),
+(3, 'a1', 'a1', 'a1', 'a1', 'a1', 12, 0),
+(4, 'a2', 'a2', 'a2', 'a2', 'a2', 12, 0),
+(13, 'peacepeerawat@gmail.com', 'admin', '12345678', 'asdas', 'asdasd', 12, 0);
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `activity`
+-- Indexes for table `course`
 --
-ALTER TABLE `activity`
-  ADD PRIMARY KEY (`actitvityID`);
+ALTER TABLE `course`
+  ADD PRIMARY KEY (`courseID`),
+  ADD UNIQUE KEY `posture1ID_2` (`posture1ID`,`posture2ID`),
+  ADD KEY `posture1ID` (`posture1ID`),
+  ADD KEY `posture2ID` (`posture2ID`);
 
 --
--- Indexes for table `historyuseractivity`
+-- Indexes for table `historyusercourse`
 --
-ALTER TABLE `historyuseractivity`
-  ADD PRIMARY KEY (`historyUserActivityID`),
-  ADD KEY `useractivityID` (`useractivityID`);
+ALTER TABLE `historyusercourse`
+  ADD PRIMARY KEY (`historyUserCourseID`),
+  ADD KEY `useractivityID` (`userCourseID`);
 
 --
--- Indexes for table `useractivity`
+-- Indexes for table `posture`
 --
-ALTER TABLE `useractivity`
-  ADD PRIMARY KEY (`userActivityID`),
+ALTER TABLE `posture`
+  ADD PRIMARY KEY (`postureID`);
+
+--
+-- Indexes for table `usercourse`
+--
+ALTER TABLE `usercourse`
+  ADD PRIMARY KEY (`userCourseID`),
   ADD KEY `userID` (`userID`),
-  ADD KEY `activityID` (`activityID`);
+  ADD KEY `activityID` (`courseID`);
 
 --
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`userID`);
+  ADD PRIMARY KEY (`userID`),
+  ADD UNIQUE KEY `email` (`email`,`username`),
+  ADD UNIQUE KEY `email_2` (`email`,`username`);
 
 --
 -- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT for table `activity`
+-- AUTO_INCREMENT for table `course`
 --
-ALTER TABLE `activity`
-  MODIFY `actitvityID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+ALTER TABLE `course`
+  MODIFY `courseID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT for table `historyuseractivity`
+-- AUTO_INCREMENT for table `historyusercourse`
 --
-ALTER TABLE `historyuseractivity`
-  MODIFY `historyUserActivityID` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `historyusercourse`
+  MODIFY `historyUserCourseID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT for table `useractivity`
+-- AUTO_INCREMENT for table `posture`
 --
-ALTER TABLE `useractivity`
-  MODIFY `userActivityID` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `posture`
+  MODIFY `postureID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `usercourse`
+--
+ALTER TABLE `usercourse`
+  MODIFY `userCourseID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `userID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `userID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- Constraints for dumped tables
 --
 
 --
--- Constraints for table `historyuseractivity`
+-- Constraints for table `course`
 --
-ALTER TABLE `historyuseractivity`
-  ADD CONSTRAINT `historyuseractivity_ibfk_1` FOREIGN KEY (`useractivityID`) REFERENCES `useractivity` (`userActivityID`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `course`
+  ADD CONSTRAINT `course_ibfk_1` FOREIGN KEY (`posture1ID`) REFERENCES `posture` (`postureID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `course_ibfk_2` FOREIGN KEY (`posture2ID`) REFERENCES `posture` (`postureID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `useractivity`
+-- Constraints for table `historyusercourse`
 --
-ALTER TABLE `useractivity`
-  ADD CONSTRAINT `useractivity_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `useractivity_ibfk_2` FOREIGN KEY (`activityID`) REFERENCES `activity` (`actitvityId`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `historyusercourse`
+  ADD CONSTRAINT `historyusercourse_ibfk_1` FOREIGN KEY (`userCourseID`) REFERENCES `usercourse` (`userCourseID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `historyusercourse_ibfk_2` FOREIGN KEY (`userCourseID`) REFERENCES `usercourse` (`userCourseID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `usercourse`
+--
+ALTER TABLE `usercourse`
+  ADD CONSTRAINT `usercourse_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `usercourse_ibfk_2` FOREIGN KEY (`courseID`) REFERENCES `course` (`courseID`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
