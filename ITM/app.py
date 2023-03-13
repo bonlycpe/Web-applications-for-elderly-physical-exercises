@@ -50,7 +50,6 @@ def token_required(func):
 
 @app.route('/login', methods=['POST'])
 def login():
-    error = None
     cur = mysql.connection.cursor()
     cur.execute("select u.username,u.password,u.email,u.userID from users u")
     fetchdata = cur.fetchall()
