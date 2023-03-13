@@ -8,11 +8,6 @@
     />
   </head>
   <body>
-    <input
-      type="hidden"
-      id="nameCourse"
-      value="{{courseName.0}}{{courseName.1}}"
-    />
     <div style="font-size: 50px" id="count">
       {{count}}
       <input type="hidden" id="countValue" value="{{count}}" />
@@ -23,35 +18,19 @@
         <div class="head">
           <div class="time"></div>
           <div class="pause">
-            <button type="button" onclick="indexPage()">Stop</button>
+            <button type="button" onclick="indexPage()">next</button>
           </div>
         </div>
-        <div class="video" id="video">
+        <div class="video">
           <img src="{{ url_for('video_feed') }}" />
         </div>
       </div>
     </div>
   </body>
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script>
+  <script type="text/javascript">
     function indexPage() {
       window.location = "/index";
     }
   </script>
-  <script>
-    var intervalId = setInterval(function () {
-      load();
-    }, 1000);
-    function load() {
-      $.ajax({
-        url: "/exercise",
-        type: "GET",
-        success: function (response) {
-          $("#count").empty();
-          $("#count").html(response);
-        },
-      });
-    }
-  </script>
+
 </html>

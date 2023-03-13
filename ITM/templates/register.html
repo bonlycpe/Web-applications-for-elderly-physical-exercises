@@ -11,39 +11,63 @@
     <div class="container">
       <div class="video"></div>
       <div class="fill">
-        <div class="box">
-          <h1>เข้าสู่ระบบ</h1>
-          <form action="register" method="post">
+        <div class="login-box-pic">
+          <form action="register" method="post" class="box">
+            <a class="header-text">สร้างบัญชีผู้ใช้</a>
+            {% if mesage is defined and mesage %}
+            <div class="alert alert-warning">{{ mesage }}</div>
+            {% endif %}
             <div class="username">
-              <h2>ชื่อ</h2>
-              <input type="text" name="name" />
+              <a class="input-text">ชื่อ</a>
+              <input type="text" id="name" name="name" required />
             </div>
             <div class="username">
-              <h2>นามสกุล</h2>
-              <input type="text" name="surname" />
+              <a class="input-text">นามสกุล</a>
+              <input
+                type="text"
+                id="surname"
+                name="surname"
+                required="required"
+              />
             </div>
             <div class="username">
-              <h2>อายุ</h2>
-              <input type="text" name="age" />
+              <a class="input-text">อายุ</a>
+              <input type="text" id="age" name="age" required />
             </div>
             <div class="username">
-              <h2>อีเมลผู้ใช้</h2>
-              <input type="text" name="email" />
+              <a class="input-text">ส่วนสูง</a>
+              <input type="text" id="height" name="height" required />
             </div>
             <div class="username">
-              <h2>ชื่อผู้ใช้</h2>
-              <input type="text" name="username" />
+              <a class="input-text">อีเมลผู้ใช้</a>
+              <input type="text" id="email" name="email" required />
             </div>
             <div class="username">
-              <h2>รหัสผ่าน</h2>
-              <input type="text" name="password" />
+              <a class="input-text">ชื่อผู้ใช้</a>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                required="required"
+              />
             </div>
             <div class="username">
-              <h2>ยืนยันรหัสผ่าน</h2>
-              <input type="text" name="confirmPassword" />
+              <a class="input-text">รหัสผ่าน</a>
+              <input type="password" id="password" name="password" required />
+            </div>
+            <div class="username">
+              <a class="input-text">ยืนยันรหัสผ่าน</a>
+              <input
+                type="password"
+                id="password_confirm"
+                name="password_confirm"
+                required
+              />
             </div>
             <div class="btn">
-              <button class="login-btn" type="submit">ลงทะเบียน</button>
+              <button class="login-btn" id="send_button" type="submit">
+                <a>ลงทะเบียน</a>
+              </button>
               <div class="register-btn">
                 <a href="/">กลับ</a>
               </div>
