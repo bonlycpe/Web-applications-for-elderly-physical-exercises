@@ -1,42 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-  </head>
-
-  <div class="about-content" id="selectedCourse">
-    <div class="about-head">
-      {% for row in courseSelected %}
-      <a>Set {{row.0}}</a>
-      {% endfor %}
-    </div>
-    <div class="about-body">
-      <ul>
-        {% for row in courseNameSelected %}
-        <li>ท่า {{row.0}}</li>
-        {% endfor %}
-      </ul>
-    </div>
-  </div>
-
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script type="text/javascript">
-    $("button").click(function () {
-      var data = $(this).val();
-      $.ajax({
-        method: "GET",
-        url: "/select/" + data,
-        success: function (response) {
-          $("#selectedCourse").empty();
-          $("#selectedCourse").html(
-            <div class="about-head" id="selectedCourse">
-              <a>Set response.courseSelected[0]</a>
-            </div>
-          );
-          courseSelected = response.courseSelected;
-          alert(response.courseNameSelected);
-        },
-      });
-    });
-  </script>
-</html>
+<div class="about-head">
+  {% for row in courseSelected %}
+  <a>Set {{row.0}}</a>
+  {% endfor %}
+</div>
+<div class="about-body">
+  <ul>
+    {% for row in courseNameSelected %}
+    <li>ท่า {{row.0}}</li>
+    {% endfor %}
+  </ul>
+</div>

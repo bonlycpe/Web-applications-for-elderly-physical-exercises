@@ -30,7 +30,9 @@
               />
             </div>
             <div class="btn">
-              <button class="login-btn" type="submit">เข้าสู่ระบบ</button>
+              <button class="login-btn" id="login" type="submit">
+                เข้าสู่ระบบ
+              </button>
               <div class="register-btn">
                 <a href="registerForm">ลงทะเบียน</a>
               </div>
@@ -40,6 +42,7 @@
       </div>
     </div>
   </body>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script>
     document.getElementById("login").onclick = function () {
       document.getElementById("login").submit();
