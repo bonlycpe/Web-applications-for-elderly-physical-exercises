@@ -81,8 +81,6 @@
         success: function (response) {
           $("#selectedCourse").empty();
           $("#selectedCourse").html(response);
-          courseSelected = response.courseSelected;
-          alert(response.courseNameSelected);
         },
       });
     });

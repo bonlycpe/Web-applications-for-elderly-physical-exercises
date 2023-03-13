@@ -3,11 +3,15 @@ from flask import Flask, request, render_template, Response , jsonify, Blueprint
 import jwt
 import re
 from flask_mysqldb import MySQL
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta , date
 from functools import wraps
-from datetime import datetime, date
 import pickle
 import cv2
+import mediapipe as mp
+import pandas as pd
+import pickle 
+import joblib
+import time
 
 app = Flask(__name__)
 
@@ -239,18 +243,24 @@ def seletedCourse(courseName):
 
 @app.route("/playtask1/<courseName>",methods=['POST','GET'])
 def playtask1(courseName):
-    count = 0
-    return render_template('play.html',courseName=courseName,count = count)
+    global courseSelect,nowCourse
+    setDefault()
+    if(courseName == "AB"):
+        courseSelect = 0
+        nowCourse = course[courseSelect][status]
+    elif (courseName == "CD"):
+        courseSelect = 1
+        nowCourse = course[courseSelect][status]
+    return render_template('play.html',courseName=courseName,count = count) 
 
 @app.route('/exercise',methods=['POST','GET'])
 def exercise():
     return render_template('count.html',count=count)
 
-import mediapipe as mp
-import pandas as pd
-import pickle 
 
-model=pickle.load(open("handup_model.pkl", 'rb'))
+modelHandUp=pickle.load(open("model/handup_model.pkl", 'rb'))
+modelstompingAndBent=pickle.load(open("model/stompingAndBent.pkl", 'rb'))
+modelfistAndStride=pickle.load(open("model/fistAndStride.pkl", 'rb'))
 
 # Grabbing the Holistic Model from Mediapipe and
 mp_holistic = mp.solutions.holistic
@@ -265,33 +275,116 @@ holistic_model = mp_holistic.Holistic(
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 
+def calculateScore():
+    global elapsed_time,score
+#     if(elapsed_time<=360):
+#         score = 3
+#     elif(elapsed_time>360 and elapsed_time<=600):
+#         score = 2
+#     else: 
+#         score = 1
+    if(score==0):
+        if(elapsed_time<=20):
+            score = 3
+        elif(elapsed_time>20 and elapsed_time<=25):
+            score = 2
+        else: 
+            score = 1
+
+def setZero():
+    global stage,step,count,status
+    stage = 1
+    step = 1
+    status+=1
+    count=0
+
+def setDefault():
+    global course,courseSelect,status,stage,step,count,countGoal,start_time,elapsed_time,restStage,nowCourse,score
+    status = 0
+    stage = 1
+    step = 1
+    count = 0
+    elapsed_time = 0
+    score = 0
+    restStage = True
+    start_time = time.time()
+
+
+# Course
+courseA = ["stompingAndBent","rest","fistAndStride","end"]
+courseB = ["handUpA","rest","handUpB","end"]
+course = [courseA,courseB]
+
+# initialize the golbal value
+status = 0
+stage = 1
+step = 1
 count = 0
-stage = 0
+elapsed_time = 0
+score = 0
+restStage = True
+mpModel=[modelstompingAndBent,modelfistAndStride,modelHandUp,modelHandUp]
+countGoal = [2,10,15]
+start_time = time.time()
+
+courseSelect = 1
+
+# set course
+nowCourse = course[courseSelect][status]
 
 def gen():
-    global count
-    global stage
-
-    cap = cv2.VideoCapture(0)
-    count = 0
-
-    while cap.isOpened():
-        rat, frame = cap.read()
-
-        # resizing the frame for better view
-        frame = cv2.resize(frame, (860,645))
+     # model global variable
+    global mp_holistic,holistic_model,mp_drawing,mp_drawing_styles,mpModel
     
+    # global variable
+    global course,courseSelect,status,stage,step,count,countGoal,start_time,elapsed_time,restStage,nowCourse,score
+    
+    # (0) in VideoCapture is used to connect to your computer's default camera
+    capture = cv2.VideoCapture(0)
+
+    while capture.isOpened():
+        # capture frame by frame
+        ret, frame = capture.read()
+
+        elapsed_time = time.time() - start_time
+
+        # resizing the frame
+        frame = cv2.resize(frame, (860,645))
+
         # Converting the from BGR to RGB
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
+        # Making predictions using holistic model
+        # To improve performance, optionally mark the image as not writeable to
+        # pass by reference.
         image.flags.writeable = False
 
         results = holistic_model.process(image)
 
         image.flags.writeable = True
-    
+
         # Converting back the RGB image to BGR
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+
+        # drawing skeleton
+        mp_drawing.draw_landmarks(
+            image, 
+            results.pose_landmarks, 
+            mp_holistic.POSE_CONNECTIONS,   
+            landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style()
+        )
+
+        # model loader
+        if(nowCourse==course[0][0]):
+            model = mpModel[0]
+        elif(nowCourse==course[0][2]):
+            model = mpModel[1]
+        elif(nowCourse==course[1][0]):
+            model = mpModel[2]
+        elif(nowCourse==course[1][2]):
+            model = mpModel[3]
+        else:
+            pass
 
         try:
             pose = results.pose_landmarks.landmark
@@ -301,42 +394,144 @@ def gen():
             X = pd.DataFrame([pose_row])
             predict_class = model.predict(X)[0]
             predict_prob = model.predict_proba(X)[0]
-            str_count = f"{count}"
-            
-            if(stage == 0 and predict_class=="left_hand" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.75):
-                stage = 1
-            elif(stage == 1 and predict_class=="right_hand" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.75):
-                count+=1
-                stage = 0
 
+            # rest stage
+            if(nowCourse=="rest"):
+                if(restStage):
+                    start_sw = time.time()
+                    stop_watch = 0
+                    restStage = False
+
+                # calculate elapsed time
+                sw_time = time.time() - start_sw
+                stop_watch = int(3-sw_time)
+                if(stop_watch>=0):
+                    if(stop_watch>=10):
+                        cv2.putText(image, f"{stop_watch}"
+                            , (270,400), cv2.FONT_HERSHEY_SIMPLEX, 8, (0, 0, 255), 8, cv2.LINE_AA)
+                    else:
+                        cv2.putText(image, f"{stop_watch}"
+                            , (340,400), cv2.FONT_HERSHEY_SIMPLEX, 8, (0, 0, 255), 8, cv2.LINE_AA)
+                else:
+                    setZero()
+                    nowCourse=course[courseSelect][status]
+                    
+            elif(nowCourse=="end"):
+                calculateScore()
+                # comemnt ----
+                if(score==3):
+                    str_medal = "SO FIT"
+                elif(score==2):
+                    str_medal = "SO STRONG"
+                elif(score==1):
+                    str_medal = "SO GOOD"
+                cv2.putText(image, str_medal
+                        , (270,250), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 8, cv2.LINE_AA)
+                # -----
+                
+            # A Course
+            elif(nowCourse==course[0][0]):
+                if(count==countGoal[0]):
+                    setZero()
+                    nowCourse=course[courseSelect][status]
+                if(stage == 1 and predict_class=="sab1" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.55):
+                    stage = 2
+                elif(stage == 2 and predict_class=="sab2" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.55):
+                    count+=1
+                    stage = 1
+            elif(nowCourse==course[0][2]):
+                if(count==countGoal[0]):
+                    # End here
+                    nowCourse=course[courseSelect][status]
+                if(stage == 1 and predict_class=="fas1" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.7):
+                    if(step==1):
+                        stage = 2
+                    if(step==2):
+                        stage = 3
+                    if(step==3):
+                        count+=1
+                        step = 1
+                elif(stage == 2 and predict_class=="fas2" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.4):
+                    stage = 1
+                    step = 2
+                elif(stage == 3 and predict_class=="fas3" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.4):
+                    step = 3
+                    stage = 1 
+            # B course
+            elif(nowCourse==course[1][0]):
+                if(count==countGoal[0]):
+                    setZero()
+                    nowCourse = course[courseSelect][status]
+                if(stage == 1 and predict_class=="left_hand" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.75):
+                    stage = 2
+                elif(stage == 2 and predict_class=="right_hand" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.75):
+                    count+=1
+                    stage = 1
+            elif(nowCourse==course[1][2]):
+                if(count==countGoal[0]):
+                    # ending here
+                    setZero()
+                    nowCourse=course[courseSelect][status]
+                if(stage == 1 and predict_class=="right_hand" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.75):
+                    stage = 2
+                elif(stage == 2 and predict_class=="left_hand" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.75):
+                    count+=1
+                    stage = 1
+
+
+            # personal box
+            # represents the top left corner of rectangle 
+            start_point = (200, 10)
+
+            # represents the bottom right corner of rectangle
+            end_point = (680, 630)
+
+            # Blue color in BGR
+            color = (0,255,255)
+
+            # Line thickness of 2 px
+            thickness = 4
+
+            # Using cv2.rectangle() method
+            # Draw a rectangle with blue line borders of thickness of 2 px
+            cv2.rectangle(image, start_point, end_point, color, thickness)
+
+
+            # if you don't want to show any status comment from here ----------
+            str_count = f"{nowCourse} + {count}"
             # Get status box
-            cv2.rectangle(image, (0,0), (250, 60), (245, 117, 16), -1)
-
-            # Get Count box
-            cv2.rectangle(image, (190,550), (10, 700), (0, 0, 255), -1)
+            cv2.rectangle(image, (0,0), (400, 60), (255, 255, 255), -1)
 
             # Display Count Sign
-            cv2.putText(image, "COUNT"
-                        , (48,600), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 3, cv2.LINE_AA)
+            cv2.putText(image, "[ Status ]"
+                        , (48,500), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 3, cv2.LINE_AA)
 
             # Display Count
             cv2.putText(image, str_count
-                        , (75,670), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 5, cv2.LINE_AA)
+                        , (48,570), cv2.FONT_HERSHEY_SIMPLEX, 2, (123, 45, 222), 5, cv2.LINE_AA)
 
             # Display Class
             cv2.putText(image, 'CLASS'
                         , (95,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
             cv2.putText(image, predict_class.split(' ')[0]
-                        , (90,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+                        , (90,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
 
             # Display Probability
             cv2.putText(image, 'PROB'
                         , (15,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
             cv2.putText(image, str(round(predict_prob[np.argmax(predict_prob)],2))
-                        , (10,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-            
+                        , (10,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+
+            # Display Timer
+            cv2.putText(image, 'TIME'
+                        , (300,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+            cv2.putText(image, f"{int(elapsed_time)} Sec"
+                        , (250,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+
+            # to here ------
+
         except:
-            cv2.putText(image, str('out of frame')
+            cv2.putText(image, str('Out Of Frame')
                         , (210,150), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
 
         frame = cv2.imencode('.jpeg', image)[1].tobytes()
