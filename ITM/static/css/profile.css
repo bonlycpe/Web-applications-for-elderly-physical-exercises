@@ -142,3 +142,15 @@
     justify-content: center;
     align-items: center;
   }
+  .result-left-block{
+    width: 80%;
+    height: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  .result-left-block a{
+    font-size: 48px;
+    line-height: 80px;
+  }

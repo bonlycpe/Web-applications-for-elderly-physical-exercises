@@ -4,7 +4,7 @@
 }
 .pic-menu{
     background-color: rgb(0, 0, 0);
-    width: 100%;
+    width: 250px;
     height: 250px;
 }
 .navbar{
@@ -30,7 +30,7 @@
 }
 .selectmenu1{
     width: 250px;
-    height: 60px;
+    height: 100%;
     padding-top: 10px;
     padding-bottom: 10px;
     background-color: #ffffff;
@@ -38,6 +38,10 @@
     border-radius: 15px;
     font-size: 32px;
     text-align: left;
+    border-color: white;
+}
+.selectmenu1:hover{
+    background-color: #ffdc2e;
 }
 .selectmenu2{
     width: 250px;
@@ -49,6 +53,7 @@
     border-radius: 15px;
     font-size: 32px;
     text-align: left;
+    border-color: white;
 }
 .selectmenu3{
     width: 250px;
@@ -60,6 +65,7 @@
     border-radius: 15px;
     font-size: 32px;
     text-align: left;
+    border-color: white;
 }
 .selectmenu4{
     width: 250px;
@@ -71,6 +77,7 @@
     border-radius: 15px;
     font-size: 32px;
     text-align: left;
+    border-color: white;
 }
 .selectmenu5{
     width: 250px;
@@ -82,6 +89,7 @@
     border-radius: 15px;
     font-size: 32px;
     text-align: left;
+    border-color: white;
 }
 .selectmenu6{
     width: 250px;
@@ -93,6 +101,22 @@
     border-radius: 15px;
     font-size: 32px;
     text-align: left;
+    border-color: white;
+}
+.selectmenu2:hover, .active{
+    background-color: #ffdc2e;
+}
+.selectmenu3:hover, .active{
+    background-color: #ffdc2e;
+}
+.selectmenu4:hover, .active{
+    background-color: #ffdc2e;
+}
+.selectmenu5:hover, .active{
+    background-color: #ffdc2e;
+}
+.selectmenu6:hover{
+    background-color: #ffdc2e;
 }
 .navbar ul{
     margin-left: -15px;
@@ -126,6 +150,8 @@
     justify-content: center;
     align-items: center;
     text-align: center;
+    background-image: url("../pic-itm/login.png");
+    background-size: cover;
 }
 #about{
     margin-top: 745px;
@@ -234,7 +260,7 @@
     background-size: cover;
 }
 .about-head a{
-    font-size: 36px;
+    font-size: 48px;
 }
 .about-body{
     align-self: flex-start;
@@ -276,12 +302,10 @@
     font-size: 36px;
     height: 200px;
     width: 300px;
-    background-image: url("../pic-itm/login.png");
-    background-size: cover;
 }
 .contact-body{
     width: 100%;
-    height: 70%;
+    height: 80%;
     display:flex;
     justify-content: space-between;
     flex-direction: row;
@@ -289,13 +313,267 @@
     text-align: start;
 }
 .contact-block{
-    width: 220px;
-    height: 200px;
+    width: 250px;
+    height: 300px;
     background: #ffffff;
     box-shadow: 0px 0px 13px rgba(0, 0, 0, 0.25);
     display:flex;
     justify-content: center;
-    flex-direction: row;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+.contact-pic{
+    width: 200px;
+    height: 200px;
+    background-color: #FF2969;
+    margin-bottom: 20px;
+}
+#slider{
+    margin: 0 auto;
+    width: 800px;
+    max-width: 100%;
+    display:flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+#slider input[type=radio]{
+    display: none;
+}
+#slider label{
+    cursor: pointer;
+    display: none;
+}
+#slides{
+    position: relative;
+    z-index: 1;
+}
+#overflow{
+    width: 100%;
+    overflow: hidden;
+}
+#slide1:checked ~ #slides .inner{
+    margin-left: 0;
+}
+#slide2:checked ~ #slides .inner{
+    margin-left: -100%;
+}
+#slide3:checked ~ #slides .inner{
+    margin-left: -200%;
+}
+#slide4:checked ~ #slides .inner{
+    margin-left: -300%;
+}
+#slide5:checked ~ #slides .inner{
+    margin-left: -400%;
+}
+#slides .inner{
+    transition: margin-left 800ms cubic-bezier(0.770,0.000,0.175,1.000);
+    width: 500%;
+    line-height: 0;
+    height: 550px;
+}
+#slides .slide{
+    width: 20%;
+    float: left;
+    display: block;
+    height: 100%;
+}
+#slides .slide_1{
+    background-color: rgb(255, 255, 255);
+}
+#slides .slide_2{
+    background-color: rgb(255, 255, 255);
+}
+#slides .slide_3{
+    background-color: rgb(255, 255, 255);
+}
+#slides .slide_4{
+    background-color: rgb(255, 255, 255);
+}
+#slides .slide_5{
+    background-color: rgb(255, 255, 255);
+}
+.slide-content{
+    padding: 30px;
+    display:flex;
+    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
     text-align: start;
+}
+#controls{
+    margin: 0 0 0 0;
+    width: 100%;
+    height: 50px;
+    z-index: 3;
+    position: relative;
+}
+#controls label{
+    transition: opacity 0.2s ease-out;
+    display: none;
+    width: 50px;
+    height: 50px;
+    opacity: .4;
+}
+#controls label:hover{
+    opacity: 1;
+}
+#slide1:checked ~ #controls label:nth-child(2),
+#slide5:checked ~ #controls label:nth-child(1),
+#slide3:checked ~ #controls label:nth-child(4),
+#slide4:checked ~ #controls label:nth-child(5),
+#slide2:checked ~ #controls label:nth-child(3){
+    width: 50px;
+    height: 50px;
+    background-image: url("../pic-itm/rightArrow.png");
+    background-size: cover;
+    float: right;
+    margin: 0 0 0 -50px;
+    display: block;
+
+}
+#slide1:checked ~ #controls label:nth-last-child(1),
+#slide5:checked ~ #controls label:nth-last-child(2),
+#slide3:checked ~ #controls label:nth-last-child(4),
+#slide4:checked ~ #controls label:nth-last-child(3),
+#slide2:checked ~ #controls label:nth-last-child(5){
+    width: 50px;
+    height: 50px;
+    background-image: url("../pic-itm/leftArrow.png");
+    background-size: cover;
+    float: left;
+    margin: 0 -50px 0 0;
+    display: block;
+}
+#bullets{
+    margin-top: -30px;
+    text-align: center;
+}
+#bullets label{
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: #636363;
+    margin: 0 10px;
+    border-radius: 100%;
+}
+#slide1:checked ~ #bullets label:nth-child(1),
+#slide2:checked ~ #bullets label:nth-child(2),
+#slide3:checked ~ #bullets label:nth-child(3),
+#slide4:checked ~ #bullets label:nth-child(4),
+#slide5:checked ~ #bullets label:nth-child(5){
+    background: #000000;
+}
+@media screen and (max-width:900px){
+    #slide1:checked ~ #controls label:nth-child(2),
+    #slide2:checked ~ #controls label:nth-child(3),
+    #slide3:checked ~ #controls label:nth-child(4),
+    #slide4:checked ~ #controls label:nth-child(5),
+    #slide5:checked ~ #controls label:nth-child(1),
+    #slide1:checked ~ #controls label:nth-last-child(2),
+    #slide2:checked ~ #controls label:nth-last-child(3),
+    #slide3:checked ~ #controls label:nth-last-child(4),
+    #slide4:checked ~ #controls label:nth-last-child(5),
+    #slide5:checked ~ #controls label:nth-last-child(1){
+        margin: 0;
+    }
+}
+.about-body-position{
+    margin-top: 10%;
+    display: flex;
+    flex-direction: row;
+    width: 700px;
+    height: 400px;
+}
+.about-body-left{
+    display:flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 50%;
+}
+.about-body-content{
+    display:flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    height: 20%;
+    font-size: 40px;
+}
+.about-body-pic{
+    width: 100%;
+    height: 80%;
+    display:flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    image-rendering: auto;
+    font-size: 40px;
+}
+.about-body-right{
+    display:flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    text-align: start;
+    width: 100%;
+}
+.scroll{
+    width: 500px;
+    height: 150px;
+}
+.about-body-right-pic1{
+    background-image: url("../pic-itm/course1-1.png");
+    background-size: cover;
+    height: 50%;
+    width: 70%;
+}
+.about-body-right-pic2{
+    background-image: url("../pic-itm/course1-2.png");
+    background-size: cover;
+    height: 50%;
+    width: 70%;
+}
+.about-body-right-pic3{
+    background-image: url("../pic-itm/course1-3.png");
+    background-size: cover;
+    height: 50%;
+    width: 70%;
+}
+.about-body-right-pic4{
+    background-image: url("../pic-itm/course1-4.png");
+    background-size: cover;
+    height: 50%;
+    width: 70%;
+}
+.about-body-right-pic5{
+    background-image: url("../pic-itm/course2-1.png");
+    background-size: cover;
+    height: 50%;
+    width: 70%;
+}
+.about-body-right-pic6{
+    background-image: url("../pic-itm/course2-2.png");
+    background-size: cover;
+    height: 50%;
+    width: 70%;
+}
+.about-body-right-pic7{
+    background-image: url("../pic-itm/course2-3.png");
+    background-size: cover;
+    height: 50%;
+    width: 70%;
+}
+.about-body-right-pic8{
+    background-image: url("../pic-itm/course2-4.png");
+    background-size: cover;
+    height: 50%;
+    width: 70%;
 }

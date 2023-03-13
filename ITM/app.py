@@ -2,6 +2,7 @@ import numpy as np
 from flask import Flask, request, render_template, Response , jsonify, Blueprint , session, redirect, flash
 import jwt
 import re
+import math
 from flask_mysqldb import MySQL
 from datetime import datetime, timedelta , date
 from functools import wraps
@@ -281,6 +282,21 @@ def playtask1(courseName):
 def exercise():
     if 'logged_in' in session:
         return render_template('count.html',count=count,nowCourse = nowCourse)
+    else:
+        return redirect('/')
+    
+
+
+@app.route('/result',methods=['POST','GET'])
+def result():
+    if 'logged_in' in session:
+        min = 0
+        sec = elapsed_time
+        if elapsed_time >=60 :
+            min = math.floor(elapsed_time/60)
+            sec = elapsed_time - math.floor(elapsed_time*min)
+            
+        return render_template('result.html',score = score,min = min,sec = math.floor(sec))
     else:
         return redirect('/')
 
