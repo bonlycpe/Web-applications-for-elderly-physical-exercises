@@ -15,7 +15,8 @@
           <div class="time"><div style="font-size: 50px" id="count">
             {{count}}
             <input type="hidden" id="countValue" value="{{count}}" />
-          </div></div>
+          </div><div id="status" style="display: none">{{nowCourse}}
+            <input type="hidden" id="statusValue" value="{{nowCourse}}" /></div></div>
           <div class="pause">
             <button type="button" onclick="indexPage()">STOP</button>
           </div>
@@ -37,6 +38,17 @@
       load();
     }, 1000);
     function load() {
+      var status = document.getElementById("statusValue").value;
+      if (status == "rest") {
+        document.getElementById("status").style.display = "block";
+      }
+      else if(status == "end")
+      {
+        window.location = "/profile"; //route to calculate score before go to index page
+      }
+      else {
+        document.getElementById("status").style.display = "none";
+      }
       $.ajax({
         url: "/exercise",
         type: "GET",
