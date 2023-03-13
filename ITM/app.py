@@ -15,7 +15,7 @@ app.config['SECRET_KEY'] = 'x123'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'test' #name DB
+app.config['MYSQL_DB'] = 'itmdb' #name DB
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
@@ -239,36 +239,111 @@ def seletedCourse(courseName):
 
 @app.route("/playtask1/<courseName>",methods=['POST','GET'])
 def playtask1(courseName):
-    return render_template('play.html',courseName=courseName)
+    count = 0
+    return render_template('play.html',courseName=courseName,count = count)
 
-@app.route("/playtask2/<courseName>",methods=['POST','GET'])
-def playtask2(courseName):
-    return render_template('play2.html')
+@app.route('/exercise',methods=['POST','GET'])
+def exercise():
+    return render_template('count.html',count=count)
+
+import mediapipe as mp
+import pandas as pd
+import pickle 
+
+model=pickle.load(open("handup_model.pkl", 'rb'))
+
+# Grabbing the Holistic Model from Mediapipe and
+mp_holistic = mp.solutions.holistic
+
+# Initializing the Model
+holistic_model = mp_holistic.Holistic(
+    min_detection_confidence=0.5,
+    min_tracking_confidence=0.5
+)
+ 
+# Initializing the drawing utils for drawing the facial landmarks on image
+mp_drawing = mp.solutions.drawing_utils
+mp_drawing_styles = mp.solutions.drawing_styles
+
+count = 0
+stage = 0
 
 def gen():
-    
+    global count
+    global stage
+
     cap = cv2.VideoCapture(0)
+    count = 0
 
     while cap.isOpened():
         rat, frame = cap.read()
 
         # resizing the frame for better view
-        frame = cv2.resize(frame, (640,480))
+        frame = cv2.resize(frame, (860,645))
     
         # Converting the from BGR to RGB
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
         image.flags.writeable = False
+
+        results = holistic_model.process(image)
+
         image.flags.writeable = True
     
         # Converting back the RGB image to BGR
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
+        try:
+            pose = results.pose_landmarks.landmark
+            pose_row = list(np.array([[landmark.x,landmark.y,landmark.z,landmark.visibility] for landmark in pose]).flatten())
+
+            # Make Detections
+            X = pd.DataFrame([pose_row])
+            predict_class = model.predict(X)[0]
+            predict_prob = model.predict_proba(X)[0]
+            str_count = f"{count}"
+            
+            if(stage == 0 and predict_class=="left_hand" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.75):
+                stage = 1
+            elif(stage == 1 and predict_class=="right_hand" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.75):
+                count+=1
+                stage = 0
+
+            # Get status box
+            cv2.rectangle(image, (0,0), (250, 60), (245, 117, 16), -1)
+
+            # Get Count box
+            cv2.rectangle(image, (190,550), (10, 700), (0, 0, 255), -1)
+
+            # Display Count Sign
+            cv2.putText(image, "COUNT"
+                        , (48,600), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 3, cv2.LINE_AA)
+
+            # Display Count
+            cv2.putText(image, str_count
+                        , (75,670), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 5, cv2.LINE_AA)
+
+            # Display Class
+            cv2.putText(image, 'CLASS'
+                        , (95,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+            cv2.putText(image, predict_class.split(' ')[0]
+                        , (90,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+
+            # Display Probability
+            cv2.putText(image, 'PROB'
+                        , (15,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+            cv2.putText(image, str(round(predict_prob[np.argmax(predict_prob)],2))
+                        , (10,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+            
+        except:
+            cv2.putText(image, str('out of frame')
+                        , (210,150), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
+
         frame = cv2.imencode('.jpeg', image)[1].tobytes()
         yield (b'--frame\r\n'
                 b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
     
-@app.route('/video_feed')
+@app.route('/video_feed',methods=['POST','GET'])
 def video_feed():
     """Video streaming route. Put this in the src attribute of an img tag."""
     return Response(gen(),
