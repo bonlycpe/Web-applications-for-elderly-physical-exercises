@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 14, 2023 at 05:24 PM
+-- Generation Time: Mar 14, 2023 at 05:30 PM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -39,8 +39,8 @@ CREATE TABLE `course` (
 --
 
 INSERT INTO `course` (`courseID`, `posture1ID`, `posture2ID`, `name`) VALUES
-(1, 1, 2, 'AB'),
-(2, 3, 4, 'CD');
+(1, 1, 2, 'ยืดเส้นยืดสายกายใจ'),
+(2, 3, 4, 'เบาสบายกายขยับ');
 
 -- --------------------------------------------------------
 
@@ -86,10 +86,10 @@ CREATE TABLE `posture` (
 --
 
 INSERT INTO `posture` (`postureID`, `name`) VALUES
-(1, 'A'),
-(2, 'B'),
-(3, 'C'),
-(4, 'D');
+(1, 'แกว่งแขน'),
+(2, 'ย่ำเท้างอขา'),
+(3, 'กางแขนยกมือ'),
+(4, 'กำหมัดยกขา');
 
 -- --------------------------------------------------------
 
