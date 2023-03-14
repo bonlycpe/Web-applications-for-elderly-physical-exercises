@@ -1,0 +1,2 @@
+courseA = ["waistRaises","rest","stompingAndBent","end"]
+courseB = ["fistAndStride","rest","stretchAndBack","end"]
