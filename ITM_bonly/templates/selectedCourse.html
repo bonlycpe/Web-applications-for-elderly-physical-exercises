@@ -1,0 +1,13 @@
+
+    <div class="about-head">
+      {% for row in courseSelected %}
+      <a>Set {{row.0}}</a>
+      {% endfor %}
+    </div>
+    <div class="about-body">
+      <ul>
+        {% for row in courseNameSelected %}
+        <li>ท่า {{row.0}}</li>
+        {% endfor %}
+      </ul>
+    </div>
