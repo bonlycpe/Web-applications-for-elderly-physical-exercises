@@ -399,6 +399,8 @@ def gen():
         # resizing the frame
         frame = cv2.resize(frame, (860,645))
 
+        frame = cv2.flip(frame, 1)
+
         # Converting the from BGR to RGB
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
