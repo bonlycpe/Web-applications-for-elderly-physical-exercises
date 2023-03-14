@@ -15,6 +15,7 @@ import joblib
 import time
 
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 # 16 MB
 
 app.config['SECRET_KEY'] = 'x123'
 app.config['MYSQL_HOST'] = 'localhost'
@@ -416,7 +417,7 @@ def gen():
 
         # model loader
         if(nowCourse==course[0][0]):
-            model = mpModel[1]
+            model = mpModel[0]
         elif(nowCourse==course[0][2]):
             model = mpModel[1]
         elif(nowCourse==course[1][0]):
@@ -496,6 +497,28 @@ def gen():
                 elif(stage == 2 and predict_class=="sab2" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.55):
                     count+=1
                     stage = 1
+#             elif(nowCourse==course[0][0]):
+#                 if(count==countGoal[0]):
+#                     setZero()
+#                     nowCourse=course[courseSelect][status]
+#                 if(stage == 1 and predict_class=="lag_raises_1" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.55):
+#                     stage = 2
+#                 elif(stage == 2 and predict_class=="lag_raises_2" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.55):
+#                     stage = 3
+#                 elif(stage == 3 and predict_class=="lag_raises_1" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.55):
+#                     stage = 4
+#                 elif(stage == 4 and predict_class=="lag_raises_3" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.55):
+#                     count+=1
+#                     stage = 1
+#             elif(nowCourse==course[0][2]):
+#                 if(count==countGoal[0]):
+#                     # End Here
+#                     nowCourse=course[courseSelect][status]
+#                 if(stage == 1 and predict_class=="sab1" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.55):
+#                     stage = 2
+#                 elif(stage == 2 and predict_class=="sab2" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.55):
+#                     count+=1
+#                     stage = 1 
             # B course
             elif(nowCourse==course[1][0]):
                 if(count==countGoal[0]):
