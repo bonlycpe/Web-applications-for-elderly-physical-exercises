@@ -8,6 +8,7 @@
     />
   </head>
   <body>
+    <input type="hidden" id="courseName" value="{{courseName}}"/>
     <div class="container">
       <div class="box1"></div>
       <div class="box2">
@@ -18,7 +19,7 @@
           </div><div id="status" style="display: none">{{nowCourse}}
             <input type="hidden" id="statusValue" value="{{nowCourse}}" /></div></div>
           <div class="pause">
-            <button type="button" onclick="indexPage()">STOP</button>
+            <button class="pause" type="button" onclick="indexPage()">STOP</button>
           </div>
         </div>
         <div class="video">
@@ -44,7 +45,8 @@
       }
       else if(status == "end")
       {
-        window.location = "/result"; //route to calculate score before go to index page
+        var courseName = document.getElementById("courseName").value;
+        window.location = "/result/"+courseName; //route to calculate score before go to index page
       }
       else {
         document.getElementById("status").style.display = "none";

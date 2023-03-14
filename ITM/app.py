@@ -220,9 +220,9 @@ def select():
         course1 = cur.fetchall()
         cur.execute("select p.name from posture p where p.postureID="+str(courseSelected[0][2]))
         course2 = cur.fetchall()
-        # value = (str(session['userID']),str(courseSelected[0][3]))
-        # cur.execute("INSERT INTO usercourse(userID,courseID) VALUES(%s,%s)", value)
-        # mysql.connection.commit()
+        value = (str(session['userID']),str(courseSelected[0][3]))
+        cur.execute("INSERT INTO usercourse(userID,courseID) VALUES(%s,%s)", value)
+        mysql.connection.commit()
         cur.close()
         courseNameSelected = [course1[0],course2[0]]
         return render_template('select.html',course = fetchdata,courseSelected = courseSelected,courseNameSelected = courseNameSelected)
@@ -242,9 +242,9 @@ def seletedCourse(courseName):
         cur.execute("select p.name from posture p where p.postureID="+str(courseSelected[0][2]))
         course2 = cur.fetchall()
         courseNameSelected = [course1[0],course2[0]]
-        # value = (str(session['userID']),str(courseSelected[0][3]))
-        # cur.execute("INSERT INTO usercourse(userID,courseID) VALUES(%s,%s)", value)
-        # mysql.connection.commit()
+        value = (str(session['userID']),str(courseSelected[0][3]))
+        cur.execute("INSERT INTO usercourse(userID,courseID) VALUES(%s,%s)", value)
+        mysql.connection.commit()
         cur.close()
         return render_template('selectedCourse.html',courseSelected = courseSelected,courseNameSelected = courseNameSelected)
     else:
@@ -287,15 +287,23 @@ def exercise():
     
 
 
-@app.route('/result',methods=['POST','GET'])
-def result():
+@app.route('/result/<courseName>',methods=['POST','GET'])
+def result(courseName):
     if 'logged_in' in session:
         min = 0
         sec = elapsed_time
         if elapsed_time >=60 :
             min = math.floor(elapsed_time/60)
             sec = elapsed_time - math.floor(elapsed_time*min)
-            
+        cur = mysql.connection.cursor()
+        cur.execute("select distinct c.courseID from course c inner join posture p on p.postureID=c.posture1ID or p.postureID=c.posture2ID where c.name='"+str(courseName)+"'")
+        courseSelected = cur.fetchall()
+        cur.execute("select distinct uc.userCourseID from usercourse uc where uc.userID='"+str(session['userID'])+"' and uc.courseID='"+str(courseSelected[0][0])+"'")
+        userCourse = cur.fetchall()
+        value = (str(userCourse[0][0]),score,elapsed_time)
+        cur.execute("INSERT INTO historyusercourse(userCourseID,score,timer) VALUES(%s,%s,%s)", value)
+        mysql.connection.commit()
+        cur.close()
         return render_template('result.html',score = score,min = min,sec = math.floor(sec))
     else:
         return redirect('/')
