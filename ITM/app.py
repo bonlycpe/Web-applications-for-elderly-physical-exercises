@@ -294,7 +294,7 @@ def result(courseName):
         sec = elapsed_time
         if elapsed_time >=60 :
             min = math.floor(elapsed_time/60)
-            sec = elapsed_time - math.floor(elapsed_time*min)
+            sec = elapsed_time - math.floor(60*min)
         cur = mysql.connection.cursor()
         cur.execute("select distinct c.courseID from course c inner join posture p on p.postureID=c.posture1ID or p.postureID=c.posture2ID where c.name='"+str(courseName)+"'")
         courseSelected = cur.fetchall()
