@@ -1,0 +1,105 @@
+.container {
+    display: flex;
+    flex-direction: row;
+  }
+  .video {
+    position: absolute;
+    width: 40%;
+    height: 100vh;
+    left: 0px;
+    top: 0px;
+  
+    background: #ffdc2e;
+  }
+  .fill {
+    position: absolute;
+    margin-left: 40%;
+    width: 60%;
+    height: 100vh;
+    left: 0px;
+    top: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
+    background: #ffffff;
+  }
+  .login-box-pic{
+    width: 740px;
+    height: 720px;
+    background-image: url("../pic-itm/Register.png");
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .header-text {
+    font-size: 40px;
+    color: #000000;
+  }
+  .box {
+    width: 600px;
+    height: 600px;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 15px;
+    background: #ffffff;
+    box-shadow: 0px 0px 18px rgba(0, 0, 0, 0.25);
+  }
+  .username {
+    width: 500px;
+    height: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .input-text {
+    font-size: 20px;
+    color: black;
+  }
+  .username input {
+    width: 350px;
+    height: 35px;
+    background-color: #bfbfbf;
+    border-radius: 15px;
+    border-color: #ffffff;
+    font-size: 24px;
+    color: #ffffff;
+  }
+  .btn {
+    width: 310px;
+    height: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .login-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    height: 60px;
+    background-color: #ff2969;
+    border-radius: 15px;
+  }
+  .login-btn a {
+    font-size: 30px;
+    color: #ffffff;
+  }
+  .register-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    height: 60px;
+    background-color: #bfbfbf;
+    border-radius: 15px;
+    border: solid 2px rgb(0, 0, 0);
+  }
+  .register-btn a {
+    font-size: 30px;
+    color: #000000;
+    text-decoration: none; 
+  }
