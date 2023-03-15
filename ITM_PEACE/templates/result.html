@@ -23,13 +23,13 @@
   </body>
   <script>
     var imSelect = document.getElementById("imSelected").value
-    if(imSelect == "50"){
+    if(imSelect == "1"){
       document.getElementById("score").src="{{ url_for('static', filename='pic-itm/Bronze.png') }}"
     }
-    else if(imSelect == "70"){
+    else if(imSelect == "2"){
       document.getElementById("score").src="{{ url_for('static', filename='pic-itm/Silver.png') }}"
     }
-    else if(imSelect == "100"){
+    else if(imSelect == "3"){
       document.getElementById("score").src="{{ url_for('static', filename='pic-itm/Gold.png') }}"
     }
     else{

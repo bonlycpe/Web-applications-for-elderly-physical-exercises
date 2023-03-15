@@ -266,7 +266,7 @@ def seletedCourse(courseName):
 @app.route("/playtask1/<courseName>",methods=['POST','GET'])
 def playtask1(courseName):
     if 'logged_in' in session:
-        global courseSelect,nowCourse
+        global courseSelect,nowCourse,stage
         setDefault()
         if(courseName == "ยืดเส้นยืดสายกายใจ"):
             courseSelect = 0
@@ -274,15 +274,15 @@ def playtask1(courseName):
         elif (courseName == "เบาสบายกายขยับ"):
             courseSelect = 1
             nowCourse = course[courseSelect][status]
-        return render_template('play.html',courseName=courseName,count = count,nowCourse = nowCourse,stage = stage,step=step) 
+        return render_template('play.html',courseName=courseName,count = count,nowCourse = nowCourse,stage = stage) 
     else:
         return redirect('/')
 
 @app.route('/exercise',methods=['POST','GET'])
 def exercise():
     if 'logged_in' in session:
-        global count
-        return render_template('count.html',count=count,nowCourse = nowCourse,stage = stage,step=step)
+        global count,stage
+        return render_template('count.html',count=count,nowCourse = nowCourse,stage = stage)
     else:
         return redirect('/')
     
@@ -342,7 +342,7 @@ def calculateScore():
 def setZero():
     global stage,step,count,status
     stage = 1
-    step = 1
+    step = 0
     status+=1
     count=0
 
@@ -350,7 +350,7 @@ def setDefault():
     global course,courseSelect,status,stage,step,count,countGoal,start_time,elapsed_time,restStage,nowCourse,score
     status = 0
     stage = 1
-    step = 1
+    step = 0
     count = 0
     elapsed_time = 0
     score = 0
@@ -368,7 +368,7 @@ course = [courseA,courseB]
 courseSelect = 0
 status = 0
 stage = 1
-step = 1
+step = 0
 count = 0
 elapsed_time = 0
 score = 0
@@ -417,13 +417,13 @@ def gen():
         # Converting back the RGB image to BGR
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-        # drawing skeleton
-        mp_drawing.draw_landmarks(
-            image, 
-            results.pose_landmarks, 
-            mp_holistic.POSE_CONNECTIONS,   
-            landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style()
-        )
+        # # drawing skeleton
+        # mp_drawing.draw_landmarks(
+        #     image, 
+        #     results.pose_landmarks, 
+        #     mp_holistic.POSE_CONNECTIONS,   
+        #     landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style()
+        # )
 
         # model loader
         if(nowCourse==course[0][0]):
@@ -496,7 +496,9 @@ def gen():
                     setZero()
                     nowCourse=course[courseSelect][status]
                 if(stage == 1 and predict_class=="wflr1" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.30):
-                    if(step==1):
+                    if(step==0):
+                        step = 1
+                    elif(step==1):
                         stage = 2
                     elif(step==2):
                         stage = 3
@@ -522,15 +524,17 @@ def gen():
                 if(count==countGoal[0]):
                     setZero()
                     nowCourse = course[courseSelect][status]
-                if(stage == 1 and predict_class=="fas1" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.20):
-                    if(step==1):
+                if(stage == 1 and predict_class=="fas1" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.30):
+                    if(step==0):
+                        step = 1
+                    elif(step==1):
                         stage = 2
                     elif(step==2):
                         stage = 3
-                elif(stage == 2 and predict_class=="fas2" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.20):
+                elif(stage == 2 and predict_class=="fas2" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.30):
                     step=2
                     stage = 1
-                elif(stage == 3 and predict_class=="fas3" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.20):
+                elif(stage == 3 and predict_class=="fas3" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.30):
                     count+=1
                     step = 1
                     stage = 1
@@ -540,7 +544,9 @@ def gen():
                     setZero()
                     nowCourse=course[courseSelect][status]
                 if(stage == 1 and predict_class=="ss1" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.30):
-                    if(step==1):
+                    if(step==0):
+                        step = 1
+                    elif(step==1):
                         stage = 2
                     elif(step==2):
                         stage = 3
@@ -551,44 +557,44 @@ def gen():
                     count+=1
                     step = 1
                     stage = 1
-
+                    
             # Using cv2.rectangle() method
             # Draw a rectangle with blue line borders of thickness of 2 px
-            cv2.rectangle(image, start_point, end_point, (0,255,255), thickness)
+            cv2.rectangle(image, start_point, end_point, (0,255,0), 5)
 
 
-            # if you don't want to show any status comment from here ----------
-            str_count = f"{nowCourse} + {count}"
-            # Get status box
-            cv2.rectangle(image, (0,0), (500, 60), (255, 255, 255), -1)
+            # # if you don't want to show any status comment from here ----------
+            # str_count = f"{nowCourse} + {count}"
+            # # Get status box
+            # cv2.rectangle(image, (0,0), (500, 60), (255, 255, 255), -1)
 
-            # Display Count Sign
-            cv2.putText(image, "[ Status ]"
-                        , (48,500), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 3, cv2.LINE_AA)
+            # # Display Count Sign
+            # cv2.putText(image, "[ Status ]"
+            #             , (48,500), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 3, cv2.LINE_AA)
 
-            # Display Count
-            cv2.putText(image, str_count
-                        , (48,570), cv2.FONT_HERSHEY_SIMPLEX, 2, (123, 45, 222), 5, cv2.LINE_AA)
+            # # Display Count
+            # cv2.putText(image, str_count
+            #             , (48,570), cv2.FONT_HERSHEY_SIMPLEX, 2, (123, 45, 222), 5, cv2.LINE_AA)
 
-            # Display Class
-            cv2.putText(image, 'CLASS'
-                        , (95,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (123, 45, 222), 1, cv2.LINE_AA)
-            cv2.putText(image, predict_class.split(' ')[0]
-                        , (90,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (123, 45, 222), 2, cv2.LINE_AA)
+            # # Display Class
+            # cv2.putText(image, 'CLASS'
+            #             , (95,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (123, 45, 222), 1, cv2.LINE_AA)
+            # cv2.putText(image, predict_class.split(' ')[0]
+            #             , (90,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (123, 45, 222), 2, cv2.LINE_AA)
 
-            # Display Probability
-            cv2.putText(image, 'PROB'
-                        , (15,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (123, 45, 222), 1, cv2.LINE_AA)
-            cv2.putText(image, str(round(predict_prob[np.argmax(predict_prob)],2))
-                        , (10,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (123, 45, 222), 2, cv2.LINE_AA)
+            # # Display Probability
+            # cv2.putText(image, 'PROB'
+            #             , (15,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (123, 45, 222), 1, cv2.LINE_AA)
+            # cv2.putText(image, str(round(predict_prob[np.argmax(predict_prob)],2))
+            #             , (10,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (123, 45, 222), 2, cv2.LINE_AA)
 
-            # Display Timer
-            cv2.putText(image, 'TIME'
-                        , (300,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (123, 45, 222), 1, cv2.LINE_AA)
-            cv2.putText(image, f"{int(elapsed_time)} Sec"
-                        , (350,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (123, 45, 222), 2, cv2.LINE_AA)
+            # # Display Timer
+            # cv2.putText(image, 'TIME'
+            #             , (300,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (123, 45, 222), 1, cv2.LINE_AA)
+            # cv2.putText(image, f"{int(elapsed_time)} Sec"
+            #             , (350,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (123, 45, 222), 2, cv2.LINE_AA)
 
-            # to here ------
+            # # to here ------
 
         except:
             # Using cv2.rectangle() method
