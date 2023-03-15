@@ -51,26 +51,29 @@ def token_required(func):
 
 @app.route('/login', methods=['POST'])
 def login():
-    cur = mysql.connection.cursor()
-    cur.execute("select u.username,u.password,u.email,u.userID from users u")
-    fetchdata = cur.fetchall()
-    cur.close()
-    for data in fetchdata:      
-        if request.form['username'] == data[0] and request.form['password'] == data[1]:
-            session['logged_in'] = True
-            session['userID'] = data[3]
-            token = jwt.encode({
-                'user':data[0],
-                'email':data[2],
-                'expiration': f"{datetime.utcnow() + timedelta(seconds=20)}"
-            },
-            app.config['SECRET_KEY'], algorithm='HS256')
-            #return jsonify({'token' : token})
-            return redirect("/index", code=302)
-        else: 
-            #return jsonify({'token' : 'Invalid credentials'})
-            flash(u'Invalid password provided', 'error')
-            return render_template('login.html')
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("select u.username,u.password,u.email,u.userID from users u where u.username = '"+str(request.form['username'])+"' and u.password ='"+str(request.form['password'])+"'")
+        fetchdata = cur.fetchall()
+        cur.close()
+        for data in fetchdata: 
+            if request.form['username'] == data[0] and request.form['password'] == data[1]:
+                
+                session['logged_in'] = True
+                session['userID'] = data[3]
+                token = jwt.encode({
+                    'user':data[0],
+                    'email':data[2],
+                    'expiration': f"{datetime.utcnow() + timedelta(seconds=20)}"
+                },
+                app.config['SECRET_KEY'], algorithm='HS256')
+                return redirect("/index", code=302)
+            else: 
+                flash(u'Invalid password provided', 'error')
+                return render_template("login.html")
+    except:
+        flash(u'Invalid password provided', 'error')
+        return render_template("login.html")
         
 
 @app.route('/registerForm')
