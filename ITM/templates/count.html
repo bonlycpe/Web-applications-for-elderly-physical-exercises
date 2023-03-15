@@ -11,12 +11,22 @@
   <img id="picPosture" src="" height=100%>
 </div>
 <script>
+  var status = document.getElementById("statusValue").value;
   var stage  = document.getElementById("stageValue").value;
-          if(stage=="2"){
-            document.getElementById("picPosture").src="{{ url_for('static', filename='pic-itm/A1.png') }}"
-          }
-          else if(stage=="1"){
-            document.getElementById("picPosture").src="{{ url_for('static', filename='pic-itm/A2.png') }}"
-          }
+  if(stage=="2" && status == "stompingAndBent"){
+    document.getElementById("picPosture").src="{{ url_for('static', filename='pic-itm/A1.png') }}"
+  }
+  else if(stage=="1" && status == "stompingAndBent"){
+    document.getElementById("picPosture").src="{{ url_for('static', filename='pic-itm/A2.png') }}"
+  }
+  else if(stage=="3" && status == "fistAndStride"){
+    document.getElementById("picPosture").src="{{ url_for('static', filename='pic-itm/B2.png') }}"
+  }
+  else if(stage=="2" && status == "fistAndStride"){
+    document.getElementById("picPosture").src="{{ url_for('static', filename='pic-itm/B1.png') }}"
+  }
+  else if(stage=="1" && status == "fistAndStride"){
+    document.getElementById("picPosture").src="{{ url_for('static', filename='pic-itm/B3.png') }}"
+  }
 </script>
 
