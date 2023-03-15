@@ -20,9 +20,11 @@
           {% endfor %}
           <div class="profile-btn">
             <div class="back">
-            <a href="editProfile">แก้ไขข้อมูล</a></div>
+              <a href="editProfile">แก้ไขข้อมูล</a>
+            </div>
             <div class="back">
-            <a href="index">กลับ</a></div>
+              <a href="index">กลับ</a>
+            </div>
           </div>
         </div>
       </div>
@@ -30,8 +32,20 @@
         <div class="profile-right-block-pic">
           <div class="profile-right-block">
             <h1>ตารางการออกกำลังกายของสัปดาห์นี้</h1>
-            <div style="height: 50vh; width: 50%">
+            <input type="hidden" id="status" value="{{status}}" />
+            <div
+              style="
+                height: 50vh;
+                width: 50%;
+                color: red;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                display: flex;
+              "
+            >
               <canvas id="myChart"></canvas>
+              <h1 id="textStatus">ยังไม่มีข้อมูล</h1>
             </div>
           </div>
         </div>
@@ -39,27 +53,33 @@
     </div>
   </body>
   <script>
-    const labels = {{ labels | tojson}};
+      if(document.getElementById("status").value == "haveData"){
+        document.getElementById("textStatus").style.display ="none";
+        const labels = {{ labels | tojson}};
 
-    const data = {
-        labels: labels,
-        datasets: [{
-            label: 'เวลา(นาที)',
-            backgroundColor: 'rgb(255, 99, 132)',
-            borderColor: 'rgb(255, 99, 132)',
-            data: {{ data | tojson}},
-        }]
-    };
+        const data = {
+            labels: labels,
+            datasets: [{
+                label: 'เวลา(นาที)',
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: {{ data | tojson}},
+            }]
+        };
 
-    const config = {
-        type: 'line',
-        data: data,
-        options: { maintainAspectRatio: false }
-    };
+        const config = {
+            type: 'line',
+            data: data,
+            options: { maintainAspectRatio: false }
+        };
 
-    const myChart = new Chart(
-        document.getElementById('myChart'),
-        config
-    );
+        const myChart = new Chart(
+            document.getElementById('myChart'),
+            config
+        );
+    }
+    else{
+      document.getElementById("myChart").style.display ="none";
+    }
   </script>
 </html>
