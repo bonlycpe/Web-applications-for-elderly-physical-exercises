@@ -16,7 +16,7 @@
               id="ytVideo"
               width="100%"
               height="420px"
-              src="https://www.youtube.com/embed/eDkpVwrhYfo?autoplay=1&mute=1&loop=1"
+              src="https://www.youtube.com/embed/cJm1KDjr4-Y?autoplay=1&mute=1&loop=1"
               frameborder="0"
             ></iframe>
           </div>
@@ -52,8 +52,17 @@
         <div class="select-box">
           {% for row in course %}
           <div class="select1">
-            <button type="button" id="selectedCourseBox" value="{{row.0}}" class="set-img-btn">
-              <div class="set-img" id="selectedBox" data-myval="{{row.0}}"></div>
+            <button
+              type="button"
+              id="selectedCourseBox"
+              value="{{row.0}}"
+              class="set-img-btn"
+            >
+              <div
+                class="set-img"
+                id="selectedBox"
+                data-myval="{{row.0}}"
+              ></div>
               <a>คอร์ส {{row.0}} (05:00 นาที)</a>
             </button>
           </div>
@@ -71,12 +80,12 @@
     $("button").click(function () {
       var data = $(this).val();
       document.getElementById("selectedCourseInput").value = data;
-      if (data == "AB") {
+      if (data == "เบาสบายกายขยับ") {
         document.getElementById("ytVideo").src =
-          "https://www.youtube.com/embed/eDkpVwrhYfo?autoplay=1&mute=1&loop=1";
+          "https://www.youtube.com/embed/cJm1KDjr4-Y?autoplay=1&mute=1&loop=1";
       } else {
         document.getElementById("ytVideo").src =
-          "https://www.youtube.com/embed/-CZcGg59vpk?autoplay=1&mute=1&loop=1";
+          "https://www.youtube.com/embed/gM8s-Si1L74?autoplay=1&mute=1&loop=1";
       }
       $.ajax({
         method: "GET",

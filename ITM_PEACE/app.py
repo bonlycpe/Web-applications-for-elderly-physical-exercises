@@ -268,10 +268,11 @@ def playtask1(courseName):
     if 'logged_in' in session:
         global courseSelect,nowCourse,stage
         setDefault()
-        if(courseName == "ยืดเส้นยืดสายกายใจ"):
+        setNumCountGoal()
+        if(courseName == "เบาสบายกายขยับ"):
             courseSelect = 0
             nowCourse = course[courseSelect][status]
-        elif (courseName == "เบาสบายกายขยับ"):
+        elif (courseName == "กำหมัดสลัดเหงื่อ"):
             courseSelect = 1
             nowCourse = course[courseSelect][status]
         return render_template('play.html',courseName=courseName,count = count,nowCourse = nowCourse,stage = stage) 
@@ -295,7 +296,7 @@ def result(courseName):
         sec = elapsed_time
         if elapsed_time >=60 :
             min = math.floor(elapsed_time/60)
-            sec = elapsed_time - math.floor(elapsed_time*min)
+            sec = elapsed_time - math.floor(60*min)
         cur = mysql.connection.cursor()
         cur.execute("select distinct c.courseID from course c inner join posture p on p.postureID=c.posture1ID or p.postureID=c.posture2ID where c.name='"+str(courseName)+"'")
         courseSelected = cur.fetchall()
@@ -346,6 +347,22 @@ def setZero():
     status+=1
     count=0
 
+def setNumCountGoal():
+    global numCountGoal
+    cur = mysql.connection.cursor()
+    cur.execute("select u.age from users u where u.userID ="+str(session['userID']))
+    fetchdata = cur.fetchall()
+    cur.close()
+    age = int(fetchdata[0][0])
+    if(age >=60 and age <65):
+        numCountGoal = 0
+    elif (age >=65 and age <70):
+        numCountGoal = 1
+    elif (age >=70):
+        numCountGoal = 2
+    else:
+        numCountGoal = 3
+
 def setDefault():
     global course,courseSelect,status,stage,step,count,countGoal,start_time,elapsed_time,restStage,nowCourse,score
     status = 0
@@ -375,7 +392,8 @@ score = 0
 restStage = True
 #mpModel=[modelLagRaises,modelStompingAndBent,modelHandUp,modelHandUp]
 mpModel=[modelWaistFeetAndLegRaises,modelStompingAndBent,modelFistAndStride,modelStretchOutAndStepBack]
-countGoal = [11,10,15]
+countGoal = [15,10,5,30]
+numCountGoal = 0
 start_time = time.time()
 
 # set course
@@ -386,7 +404,7 @@ def gen():
     global mp_holistic,holistic_model,mp_drawing,mp_drawing_styles,mpModel
     
     # global variable
-    global course,courseSelect,status,stage,step,count,countGoal,start_time,elapsed_time,restStage,nowCourse,score
+    global course,courseSelect,status,stage,step,count,countGoal,start_time,elapsed_time,restStage,nowCourse,score,numCountGoal
     
     # (0) in VideoCapture is used to connect to your computer's default camera
     capture = cv2.VideoCapture(0)
@@ -465,7 +483,7 @@ def gen():
 
                 # calculate elapsed time
                 sw_time = time.time() - start_sw
-                stop_watch = int(3-sw_time)
+                stop_watch = int(30-sw_time)
                 if(stop_watch>=0):
                     if(stop_watch>=10):
                         cv2.putText(image, f"{stop_watch}"
@@ -492,7 +510,7 @@ def gen():
                 
             # A Course
             elif(nowCourse==course[0][0]):
-                if(count==countGoal[0]):
+                if(count==countGoal[numCountGoal]):
                     setZero()
                     nowCourse=course[courseSelect][status]
                 if(stage == 1 and predict_class=="wflr1" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.30):
@@ -507,10 +525,10 @@ def gen():
                     stage = 1
                 elif(stage == 3 and predict_class=="wflr3" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.30):
                     count+=1
-                    step = 1
+                    step = 0
                     stage = 1
             elif(nowCourse==course[0][2]):
-                if(count==countGoal[0]):
+                if(count==countGoal[numCountGoal]):
                     # End here
                     setZero()
                     nowCourse=course[courseSelect][status]
@@ -521,7 +539,7 @@ def gen():
                     stage = 1 
             # B course
             elif(nowCourse==course[1][0]):
-                if(count==countGoal[0]):
+                if(count==countGoal[numCountGoal]):
                     setZero()
                     nowCourse = course[courseSelect][status]
                 if(stage == 1 and predict_class=="fas1" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.30):
@@ -536,10 +554,10 @@ def gen():
                     stage = 1
                 elif(stage == 3 and predict_class=="fas3" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.30):
                     count+=1
-                    step = 1
+                    step = 0
                     stage = 1
             elif(nowCourse==course[1][2]):
-                if(count==countGoal[0]):
+                if(count==countGoal[numCountGoal]):
                     # ending here
                     setZero()
                     nowCourse=course[courseSelect][status]
@@ -555,7 +573,7 @@ def gen():
                     stage = 1
                 elif(stage == 3 and predict_class=="ss3" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.30):
                     count+=1
-                    step = 1
+                    step = 0
                     stage = 1
                     
             # Using cv2.rectangle() method

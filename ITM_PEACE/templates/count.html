@@ -1,32 +1,39 @@
-
 <div class="head">
-  <div class="time"><div style="font-size: 50px" id="count">
-    {{count}} 
-    <input type="hidden" id="countValue" value="{{count}}" />{{stage}}
-    <input type="hidden" id="stageValue" value="{{stage}}" />
-  </div><div id="status" style="display: none">{{nowCourse}}
-    <input type="hidden" id="statusValue" value="{{nowCourse}}" /></div></div>
+  <div class="time">
+    <div style="font-size: 50px" id="count">
+      จำนวนครั้งที่ทำได้ : {{count}}
+      <input type="hidden" id="countValue" value="{{count}}" />
+      <input type="hidden" id="stageValue" value="{{stage}}" />
+    </div>
+    <div id="status" style="display: none; font-size: 30px; color: red">
+      สถานะ : {{nowCourse}}
+      <input type="hidden" id="statusValue" value="{{nowCourse}}" />
+    </div>
+  </div>
 </div>
 <div class="pic">
-  <img id="picPosture" src="" height=100%>
+  <img id="picPosture" src="" height="100%" />
 </div>
 <script>
   var status = document.getElementById("statusValue").value;
-  var stage  = document.getElementById("stageValue").value;
-  if(stage=="2" && status == "stompingAndBent"){
-    document.getElementById("picPosture").src="{{ url_for('static', filename='pic-itm/A1.png') }}"
-  }
-  else if(stage=="1" && status == "stompingAndBent"){
-    document.getElementById("picPosture").src="{{ url_for('static', filename='pic-itm/A2.png') }}"
-  }
-  else if(stage=="2" && status == "waistRaises"){
-    document.getElementById("picPosture").src="{{ url_for('static', filename='pic-itm/B3.png') }}"
-  }
-  else if(stage=="3" && status == "waistRaises"){
-    document.getElementById("picPosture").src="{{ url_for('static', filename='pic-itm/B2.png') }}"
-  }
-  else if(stage=="1" && status == "waistRaises"){
-    document.getElementById("picPosture").src="{{ url_for('static', filename='pic-itm/B1.png') }}"
+  var stage = document.getElementById("stageValue").value;
+  if (stage == "2" && status == "stompingAndBent") {
+    document.getElementById("picPosture").src =
+      "{{ url_for('static', filename='pic-itm/A1.png') }}";
+  } else if (stage == "1" && status == "stompingAndBent") {
+    document.getElementById("picPosture").src =
+      "{{ url_for('static', filename='pic-itm/A2.png') }}";
+  } else if (stage == "2" && status == "waistRaises") {
+    document.getElementById("picPosture").src =
+      "{{ url_for('static', filename='pic-itm/B3.png') }}";
+  } else if (stage == "3" && status == "waistRaises") {
+    document.getElementById("picPosture").src =
+      "{{ url_for('static', filename='pic-itm/B2.png') }}";
+  } else if (stage == "1" && status == "waistRaises") {
+    document.getElementById("picPosture").src =
+      "{{ url_for('static', filename='pic-itm/B1.png') }}";
+  } else if (status == "rest") {
+    document.getElementById("picPosture").src =
+      "{{ url_for('static', filename='pic-itm/rest.png') }}";
   }
 </script>
-
