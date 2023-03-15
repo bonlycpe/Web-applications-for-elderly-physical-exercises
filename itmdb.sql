@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 14, 2023 at 05:30 PM
+-- Generation Time: Mar 15, 2023 at 06:23 PM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -39,8 +39,8 @@ CREATE TABLE `course` (
 --
 
 INSERT INTO `course` (`courseID`, `posture1ID`, `posture2ID`, `name`) VALUES
-(1, 1, 2, 'ยืดเส้นยืดสายกายใจ'),
-(2, 3, 4, 'เบาสบายกายขยับ');
+(1, 1, 2, 'เบาสบายกายขยับ'),
+(2, 3, 4, 'กำหมัดสลัดเหงื่อ');
 
 -- --------------------------------------------------------
 
@@ -68,7 +68,13 @@ INSERT INTO `historyusercourse` (`historyUserCourseID`, `userCourseID`, `score`,
 (5, 1, 1, 66, '2023-03-10'),
 (7, 1, 3, 123.1, '2023-03-14'),
 (8, 2, 1, 69, '2023-03-14'),
-(9, 2, 1, 26.7366, '2023-03-14');
+(9, 2, 1, 26.7366, '2023-03-14'),
+(10, 28, 100, 62.8045, '2023-03-15'),
+(11, 28, 100, 63.6085, '2023-03-15'),
+(12, 33, 100, 120.54, '2023-03-15'),
+(13, 33, 0, 0, '2023-03-15'),
+(14, 41, 100, 93.074, '2023-03-16'),
+(15, 44, 100, 95.5759, '2023-03-16');
 
 -- --------------------------------------------------------
 
@@ -86,10 +92,10 @@ CREATE TABLE `posture` (
 --
 
 INSERT INTO `posture` (`postureID`, `name`) VALUES
-(1, 'แกว่งแขน'),
+(1, 'ยกแขนยกขา '),
 (2, 'ย่ำเท้างอขา'),
-(3, 'กางแขนยกมือ'),
-(4, 'กำหมัดยกขา');
+(3, 'กำหมัดก้าวเท้า'),
+(4, 'ยืดอกก้าวหลัง');
 
 -- --------------------------------------------------------
 
@@ -109,7 +115,51 @@ CREATE TABLE `usercourse` (
 
 INSERT INTO `usercourse` (`userCourseID`, `userID`, `courseID`) VALUES
 (1, 2, 1),
-(2, 2, 2);
+(2, 2, 2),
+(3, 2, 1),
+(4, 2, 1),
+(5, 2, 1),
+(6, 2, 1),
+(7, 2, 1),
+(8, 2, 1),
+(9, 2, 2),
+(10, 2, 1),
+(11, 2, 2),
+(12, 2, 1),
+(13, 2, 1),
+(14, 2, 1),
+(15, 2, 2),
+(16, 2, 1),
+(17, 2, 1),
+(18, 2, 2),
+(19, 2, 1),
+(20, 2, 1),
+(21, 2, 2),
+(22, 2, 1),
+(23, 2, 2),
+(24, 2, 1),
+(25, 2, 1),
+(26, 2, 1),
+(27, 2, 1),
+(28, 2, 1),
+(29, 2, 1),
+(30, 2, 1),
+(31, 2, 1),
+(32, 2, 1),
+(33, 2, 1),
+(34, 2, 1),
+(35, 2, 1),
+(36, 2, 1),
+(37, 2, 1),
+(38, 2, 1),
+(39, 2, 1),
+(40, 2, 2),
+(41, 2, 1),
+(42, 2, 1),
+(43, 2, 2),
+(44, 2, 1),
+(45, 2, 1),
+(46, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -133,7 +183,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`userID`, `email`, `username`, `password`, `name`, `surname`, `age`, `height`) VALUES
-(2, 'admin', 'admin', 'admin', 'admin', 'admin', 31, 160),
+(2, 'admin', 'admin', 'admin', 'admin', 'admin', 75, 160),
 (3, 'a1', 'a1', 'a1', 'a1', 'a1', 12, 0),
 (4, 'a2', 'a2', 'a2', 'a2', 'a2', 12, 0),
 (13, 'peacepeerawat@gmail.com', 'admin', '12345678', 'asdas', 'asdasd', 12, 0);
@@ -194,7 +244,7 @@ ALTER TABLE `course`
 -- AUTO_INCREMENT for table `historyusercourse`
 --
 ALTER TABLE `historyusercourse`
-  MODIFY `historyUserCourseID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `historyUserCourseID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `posture`
@@ -206,7 +256,7 @@ ALTER TABLE `posture`
 -- AUTO_INCREMENT for table `usercourse`
 --
 ALTER TABLE `usercourse`
-  MODIFY `userCourseID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `userCourseID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT for table `users`
