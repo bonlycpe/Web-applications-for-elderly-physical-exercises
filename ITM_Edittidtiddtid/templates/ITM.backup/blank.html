@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fitfaiz</title>
+  <link href="https://cdn.discordapp.com/attachments/850266840798330912/856444041247326208/Untitled-1.png" rel="icon" type="image/x-icon">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='them_blank.css') }}">
+  <link rel="stylesheet" href="../static/them_blank.css">
+</head>
+
+<body style="    background-image: url(&quot;https://cdn.wallpapersafari.com/65/19/CRuKD9.jpg&quot;);    background-position: bottom;    background-size: 130%;    background-repeat: repeat;">
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <div class="container"> <a class="navbar-brand" href="{{url_for('index')}}">
+        <img src="https://cdn.discordapp.com/attachments/850266840798330912/856444041247326208/Untitled-1.png" width="50 px" height="50 px">
+        <b></b><b id="Name project">FITFAIZ</b>
+      </a> <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse" data-target="#navbar10">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbar10">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item"> <a class="nav-link" href="{{url_for('index')}}">HOME</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="{{url_for('CT')}}">ABOUT</a> </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6" style="">
+          <h1 class="bg-dark text-light">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>FITFAIZ AI CAMERA</b>
+          </h1>
+          <img src="{{ url_for('video_feed') }}">
+        </div>
+        <div class="col-md-5 col-lg-6" style=""><img class="img-fluid d-block mx-auto w-75 pt-5" container"="" src="https://i.pinimg.com/736x/6c/19/23/6c192324fbbd7727ae2986671bfaac7c.jpg">
+          <div class="row">
+            <br><br>
+            <div class="col-md-12"><a class="btn btn-primary mt-5" href="{{url_for('p2')}}">BACK</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

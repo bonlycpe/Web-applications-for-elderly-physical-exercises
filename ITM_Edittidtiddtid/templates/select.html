@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/select.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="main-box">
+        <div class="main-box1">
+          <div class="image">
+            <iframe
+              id="ytVideo"
+              width="100%"
+              height="420px"
+              src="https://www.youtube.com/embed/eDkpVwrhYfo?autoplay=1&mute=1&loop=1"
+              frameborder="0"
+            ></iframe>
+          </div>
+        </div>
+        <div class="main-box2">
+          <button type="button" id="previewPage" class="btn">
+            <div class="inside-circle">
+              <div class="triangle"></div>
+            </div>
+            <a>เริ่ม</a>
+          </button>
+        </div>
+      </div>
+      <input type="hidden" id="selectedCourseInput" value="{{course.0.0}}" />
+      <div class="select-box-right">
+        <div class="select-btn">
+          <div class="about-content" id="selectedCourse">
+            <div class="about-head">
+              {% for row in courseSelected %}
+              <a>คอร์ส {{row.0}}</a>
+              {% endfor %}
+            </div>
+            <div class="about-body">
+              <ul>
+                {% for row in courseNameSelected %}
+                <li>ท่า {{row.0}}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          <a href="/index" class="back">กลับ</a>
+        </div>
+        <div class="select-box">
+          {% for row in course %}
+          <div class="select1">
+            <button type="button" id="selectedCourseBox" value="{{row.0}}" class="set-img-btn">
+              <div class="set-img" id="selectedBox" data-myval="{{row.0}}"></div>
+              <a>คอร์ส {{row.0}} (05:00 นาที)</a>
+            </button>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script type="text/javascript">
+    $("#previewPage").click(function () {
+      var data = document.getElementById("selectedCourseInput").value;
+      window.location = "/playtask1/" + data;
+    });
+    $("button").click(function () {
+      var data = $(this).val();
+      document.getElementById("selectedCourseInput").value = data;
+      if (data == "AB") {
+        document.getElementById("ytVideo").src =
+          "https://www.youtube.com/embed/eDkpVwrhYfo?autoplay=1&mute=1&loop=1";
+      } else {
+        document.getElementById("ytVideo").src =
+          "https://www.youtube.com/embed/-CZcGg59vpk?autoplay=1&mute=1&loop=1";
+      }
+      $.ajax({
+        method: "GET",
+        url: "/select/" + data,
+        success: function (response) {
+          $("#selectedCourse").empty();
+          $("#selectedCourse").html(response);
+        },
+      });
+    });
+  </script>
+</html>
