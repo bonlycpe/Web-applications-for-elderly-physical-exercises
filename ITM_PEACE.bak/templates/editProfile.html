@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}" />
+  </head>
+  <body>
+    <div class="profile-container-edit">
+      <div class="editprofile-left">
+        <div class="editprofile-left-block">
+          <form action="save" method="post">
+            {% if mesage is defined and mesage %}
+            <div class="alert alert-warning">{{ mesage }}</div>
+            {% endif %} {% for row in user %}
+            <div class="username">
+              <h2>ชื่อ</h2>
+              <input type="text" id="name" name="name" value="{{row.0}}" required />
+            </div>
+            <div class="username">
+              <h2>นามสกุล</h2>
+              <input
+                type="text"
+                id="surname"
+                name="surname"
+                value="{{row.1}}"
+                required="required"
+              />
+            </div>
+            <div class="username">
+              <h2>อายุ</h2>
+              <input type="text" id="age" name="age" value="{{row.2}}" required />
+            </div>
+            <div class="username">
+              <h2>ส่วนสูง</h2>
+              <input
+                type="text"
+                id="height"
+                name="height"
+                value="{{row.3}}"
+                required
+              />
+            </div>
+            <div class="btn">
+              <button class="back" id="send_button" type="submit">
+                แก้ไขข้อมูล
+              </button>
+              <a href="profile" class="back">กลับ</a>
+            </div>
+
+            {% endfor %}
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

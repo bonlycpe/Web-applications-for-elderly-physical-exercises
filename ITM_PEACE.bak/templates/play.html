@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/play.css') }}"
+    />
+  </head>
+  <body>
+    <input type="hidden" id="courseName" value="{{courseName}}" />
+    <div class="container">
+      <div class="box1" id="box1">
+        <div class="head">
+          <div class="time">
+            <div style="font-size: 50px; display: block" id="count">
+              จำนวนครั้งที่ทำได้ : {{count}}
+              <input type="hidden" id="countValue" value="{{count}}" />
+              <input type="hidden" id="stageValue" value="{{stage}}" />
+            </div>
+            <div id="status" style="display: none; font-size: 50px; color: red">
+              สถานะ : {{nowCourse}}
+              <input type="hidden" id="statusValue" value="{{nowCourse}}" />
+            </div>
+          </div>
+        </div>
+        <div class="pic">
+          <img id="picPosture" src="" height="100%" />
+        </div>
+      </div>
+      <div class="box2">
+        <div class="head">
+          <div class="pause">
+            <button class="stop" type="button" onclick="indexPage()">
+              <a>หยุด</a>
+            </button>
+          </div>
+        </div>
+        <div class="video">
+          <img src="{{ url_for('video_feed') }}" />
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script type="text/javascript">
+    function indexPage() {
+      window.location = "/index";
+    }
+  </script>
+  <script>
+    var intervalId = setInterval(function () {
+      load();
+    }, 2500);
+    function load() {
+      var status = document.getElementById("statusValue").value;
+      if (status == "rest") {
+        document.getElementById("status").style.display = "block";
+        document.getElementById("count").style.display = "none";
+      } else if (status == "end") {
+        var courseName = document.getElementById("courseName").value;
+        window.location = "/result/" + courseName; //route to calculate score before go to index page
+      } else {
+        document.getElementById("status").style.display = "none";
+        document.getElementById("count").style.display = "block";
+      }
+      $.ajax({
+        url: "/exercise",
+        type: "GET",
+        success: function (response) {
+          var stage = document.getElementById("stageValue").value;
+          if (stage == "2" && status == "stompingAndBent") {
+            //start course A
+            document.getElementById("picPosture").src =
+              "{{ url_for('static', filename='pic-itm/A1.png') }}";
+          } else if (stage == "1" && status == "stompingAndBent") {
+            document.getElementById("picPosture").src =
+              "{{ url_for('static', filename='pic-itm/A2.png') }}";
+          } else if (stage == "2" && status == "waistRaises") {
+            document.getElementById("picPosture").src =
+              "{{ url_for('static', filename='pic-itm/B3.png') }}";
+          } else if (stage == "3" && status == "waistRaises") {
+            document.getElementById("picPosture").src =
+              "{{ url_for('static', filename='pic-itm/B2.png') }}";
+          } else if (stage == "1" && status == "waistRaises") {
+            document.getElementById("picPosture").src =
+              "{{ url_for('static', filename='pic-itm/B1.png') }}"; //end course A
+          } else if (stage == "2" && status == "fistAndStride") {
+            //start course B
+            document.getElementById("picPosture").src =
+              "{{ url_for('static', filename='pic-itm/B3.png') }}";
+          } else if (stage == "3" && status == "fistAndStride") {
+            document.getElementById("picPosture").src =
+              "{{ url_for('static', filename='pic-itm/B2.png') }}";
+          } else if (stage == "1" && status == "fistAndStride") {
+            document.getElementById("picPosture").src =
+              "{{ url_for('static', filename='pic-itm/B1.png') }}";
+          } else if (stage == "2" && status == "stretchAndBack") {
+            document.getElementById("picPosture").src =
+              "{{ url_for('static', filename='pic-itm/B3.png') }}";
+          } else if (stage == "3" && status == "stretchAndBack") {
+            document.getElementById("picPosture").src =
+              "{{ url_for('static', filename='pic-itm/B2.png') }}";
+          } else if (stage == "1" && status == "stretchAndBack") {
+            document.getElementById("picPosture").src =
+              "{{ url_for('static', filename='pic-itm/B1.png') }}";
+          } else if (status == "rest") {
+            //rest
+            document.getElementById("picPosture").src =
+              "{{ url_for('static', filename='pic-itm/rest.png') }}";
+          }
+          $("#box1").empty();
+          $("#box1").html(response);
+        },
+      });
+    }
+  </script>
+</html>
