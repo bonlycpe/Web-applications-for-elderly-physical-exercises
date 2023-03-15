@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fitfaiz</title>
+  <link href="https://cdn.discordapp.com/attachments/850266840798330912/856444041247326208/Untitled-1.png" rel="icon" type="image/x-icon">
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='them_index.css') }}">
+</head>
+
+<body style="	background-position: top left, top left;	background-size: 100%, 120%;	background-repeat: repeat, repeat;	background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)), url(&quot;https://i.pinimg.com/originals/1c/44/b9/1c44b9a9297b6fad9057296490487cd5.jpg&quot;);">
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <div class="container"> <a class="navbar-brand" href="{{url_for('index')}}">
+        <img src="https://cdn.discordapp.com/attachments/850266840798330912/856444041247326208/Untitled-1.png" width="50 px" height="50 px">
+        <b></b><b id="Name project">FITFAIZ</b>
+      </a> <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse" data-target="#navbar10">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbar10">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item"> <a class="nav-link" href="{{url_for('index')}}">HOME</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="{{url_for('CT')}}">ABOUT</a> </li>
+        </ul> 
+      </div>
+    </div>
+  </nav>
+  <div class="py-5 shadow-none">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h1 class="display-1 text-light shadow-none" contenteditable="true">F I T F A I Z</h1>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-12">
+              <h3 class="shadow-none text-light">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Smart website for workout </h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="py-5 shadow-none">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h1 class="text-light shadow-none">&nbsp; &nbsp; &nbsp; &nbsp;Click to FIT :&nbsp;<a class="btn btn-primary" href="{{url_for('p2')}}">START</a></h1>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

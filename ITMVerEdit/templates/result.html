@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}" />
+  </head>
+  <body>
+    <div class="profile-container-edit">
+      <div class="editprofile-left">
+        <div class="editprofile-left-block">
+          <div class="result-left-block">
+            <a> เวลา : {{min}} นาที {{sec}} วินาที</a>
+            <a> คะแนน : {{score}}</a>
+              <div class="back">
+                <a href="/index">กลับ</a>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

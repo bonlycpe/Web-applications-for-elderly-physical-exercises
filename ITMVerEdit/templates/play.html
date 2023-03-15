@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/play.css') }}"
+    />
+  </head>
+  <body>
+    <input type="hidden" id="courseName" value="{{courseName}}"/>
+    <div class="container">
+      <div class="box1"></div>
+      <div class="box2">
+        <div class="head">
+          <div class="time"><div style="font-size: 50px" id="count">
+            {{count}}
+            <input type="hidden" id="countValue" value="{{count}}" />
+          </div><div id="status" style="display: none">{{nowCourse}}
+            <input type="hidden" id="statusValue" value="{{nowCourse}}" /></div></div>
+          <div class="pause">
+            <button class="stop" type="button" onclick="indexPage()">หยุด</button>
+          </div>
+        </div>
+        <div class="video">
+          <img src="{{ url_for('video_feed') }}" />
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script type="text/javascript">
+    function indexPage() {
+      window.location = "/index";
+    }
+  </script>
+  <script>
+    var intervalId = setInterval(function () {
+      load();
+    }, 1000);
+    function load() {
+      var status = document.getElementById("statusValue").value;
+      if (status == "rest") {
+        document.getElementById("status").style.display = "block";
+      }
+      else if(status == "end")
+      {
+        var courseName = document.getElementById("courseName").value;
+        window.location = "/result/"+courseName; //route to calculate score before go to index page
+      }
+      else {
+        document.getElementById("status").style.display = "none";
+      }
+      $.ajax({
+        url: "/exercise",
+        type: "GET",
+        success: function (response) {
+          $("#count").empty();
+          $("#count").html(response);
+        },
+      });
+    }
+  </script>
+</html>

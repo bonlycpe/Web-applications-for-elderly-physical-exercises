@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/login.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="video"></div>
+      <div class="fill">
+        <div class="login-box-pic">
+          <form action="login" method="post" class="box">
+            <a class="header-text">เข้าสู่ระบบ</a>
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                <ul class=flashes>
+                {% for message in messages %}
+                  <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
+            {% block body %}{% endblock %}
+            <div class="username">
+              <a class="input-text">ชื่อผู้ใช้</a>
+              <input type="text" name="username" placeholder="กรอกชื่อผู้ใช้" />
+            </div>
+            <div class="username">
+              <a class="input-text">รหัสผ่าน</a>
+              <input
+                type="password"
+                name="password"
+                placeholder="กรอกรหัสผ่าน"
+              />
+            </div>
+            <div class="btn">
+              <button class="login-btn" type="submit"><a>เข้าสู่ระบบ</a></button>
+              <div class="register-btn">
+                <a href="/registerForm">ลงทะเบียน</a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    document.getElementById("login").onclick = function () {
+      document.getElementById("login").submit();
+    };
+  </script>
+</html>
