@@ -10,7 +10,9 @@
     left: 0;
     width: 43%;
     height: 100vh;
-    background-color: aquamarine
+    background-color: aquamarine;
+    background-image: url("../pic-itm/A1.jpg");
+    background-size: cover;
 }
 .box2{
     position: absolute;

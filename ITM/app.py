@@ -274,14 +274,15 @@ def playtask1(courseName):
         elif (courseName == "เบาสบายกายขยับ"):
             courseSelect = 1
             nowCourse = course[courseSelect][status]
-        return render_template('play.html',courseName=courseName,count = count,nowCourse = nowCourse) 
+        return render_template('play.html',courseName=courseName,count = count,nowCourse = nowCourse,stage = stage) 
     else:
         return redirect('/')
 
 @app.route('/exercise',methods=['POST','GET'])
 def exercise():
     if 'logged_in' in session:
-        return render_template('count.html',count=count,nowCourse = nowCourse)
+        global count
+        return render_template('count.html',count=count,nowCourse = nowCourse,stage = stage)
     else:
         return redirect('/')
     
