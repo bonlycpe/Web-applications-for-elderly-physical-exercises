@@ -19,7 +19,7 @@
               <input type="hidden" id="stageValue" value="{{stage}}" />
             </div>
             <div id="status" style="display: none; font-size: 50px; color: red">
-              สถานะ : {{nowCourse}}
+              สถานะ : พักเหนื่อยแปปนึงนะครับ
               <input type="hidden" id="statusValue" value="{{nowCourse}}" />
             </div>
           </div>
@@ -51,7 +51,7 @@
   <script>
     var intervalId = setInterval(function () {
       load();
-    }, 2500);
+    }, 2000);
     function load() {
       var status = document.getElementById("statusValue").value;
       if (status == "rest") {

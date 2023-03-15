@@ -5,6 +5,8 @@ import re
 import math
 from flask_mysqldb import MySQL
 from datetime import datetime, timedelta , date
+import mysql.connector
+from mysql.connector import errorcode
 from functools import wraps
 import pickle
 import cv2
@@ -51,26 +53,29 @@ def token_required(func):
 
 @app.route('/login', methods=['POST'])
 def login():
-    cur = mysql.connection.cursor()
-    cur.execute("select u.username,u.password,u.email,u.userID from users u")
-    fetchdata = cur.fetchall()
-    cur.close()
-    for data in fetchdata:      
-        if request.form['username'] == data[0] and request.form['password'] == data[1]:
-            session['logged_in'] = True
-            session['userID'] = data[3]
-            token = jwt.encode({
-                'user':data[0],
-                'email':data[2],
-                'expiration': f"{datetime.utcnow() + timedelta(seconds=20)}"
-            },
-            app.config['SECRET_KEY'], algorithm='HS256')
-            #return jsonify({'token' : token})
-            return redirect("/index", code=302)
+        cur = mysql.connection.cursor()
+        cur.execute("select u.username,u.password,u.email,u.userID from users u where u.username = '"+str(request.form['username'])+"' and u.password ='"+str(request.form['password'])+"'")
+        fetchdata = cur.fetchall()
+        cur.close() 
+        if fetchdata:
+            for data in fetchdata: 
+                if request.form['username'] == data[0] and request.form['password'] == data[1]:
+                    
+                    session['logged_in'] = True
+                    session['userID'] = data[3]
+                    token = jwt.encode({
+                        'user':data[0],
+                        'email':data[2],
+                        'expiration': f"{datetime.utcnow() + timedelta(seconds=20)}"
+                    },
+                    app.config['SECRET_KEY'], algorithm='HS256')
+                    return redirect("/index", code=302)
+                else: 
+                    flash(u'Invalid password provided', 'error')
+                    return render_template("login.html")
         else: 
-            #return jsonify({'token' : 'Invalid credentials'})
             flash(u'Invalid password provided', 'error')
-            return render_template('login.html')
+            return render_template("login.html")
         
 
 @app.route('/registerForm')
@@ -161,13 +166,15 @@ def profile():
         cur = mysql.connection.cursor()
         cur.execute("select u.name,u.surname,u.age,u.height from users u where u.userID ="+str(session['userID']))
         fetchdata = cur.fetchall()
-        cur.execute("SELECT sum(huc.timer)/60,huc.date from usercourse uc INNER join historyusercourse huc on huc.userCourseID=uc.userCourseID WHERE uc.userID=%s AND huc.date >= (SELECT ADDDATE(Current_date, INTERVAL -8 DAY)) AND huc.date <  (SELECT ADDDATE(Current_date, INTERVAL 1 DAY)) group by huc.date  order by huc.date;",str(session['userID']))
+        try:
+            cur.execute("SELECT sum(huc.timer)/60,huc.date from usercourse uc INNER join historyusercourse huc on huc.userCourseID=uc.userCourseID WHERE uc.userID=%s AND huc.date >= (SELECT ADDDATE(Current_date, INTERVAL -8 DAY)) AND huc.date <  (SELECT ADDDATE(Current_date, INTERVAL 1 DAY)) group by huc.date  order by huc.date;",str(session['userID']))
+        except Exception as err:
+            return render_template('profile.html',user=fetchdata , labels = [] , data = [],status="noData")
         data = cur.fetchall()
         cur.close()
         labels  = [row[1].strftime('%m/%d/%Y') for row in data]
         data = [row[0] for row in data]
-        # return jsonify(type(data))
-        return render_template('profile.html',user=fetchdata , labels = labels , data = data)
+        return render_template('profile.html',user=fetchdata , labels = labels , data = data,status="haveData")
     else:
         return redirect('/')
 

@@ -5,8 +5,6 @@ import re
 import math
 from flask_mysqldb import MySQL
 from datetime import datetime, timedelta , date
-import mysql.connector
-from mysql.connector import errorcode
 from functools import wraps
 import pickle
 import cv2
