@@ -62,7 +62,7 @@
                 class="set-img"
                 id="selectedBox"
                 data-myval="{{row.0}}"
-              ></div>
+              ><img id="{{row.0}}" src="" height="100%" width="100%"/></div>
               <a>{{row.0}}</a>
             </button>
           </div>
@@ -73,6 +73,10 @@
   </body>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script type="text/javascript">
+  document.getElementById("เบาสบายกายขยับ").src =
+              "{{ url_for('static', filename='pic-itm/course1-1.png') }}";
+  document.getElementById("กำหมัดสลัดเหงื่อ").src =
+              "{{ url_for('static', filename='pic-itm/course2-1.png') }}";
     $("#previewPage").click(function () {
       var data = document.getElementById("selectedCourseInput").value;
       window.location = "/playtask1/" + data;
@@ -83,7 +87,9 @@
       if (data == "เบาสบายกายขยับ") {
         document.getElementById("ytVideo").src =
           "https://www.youtube.com/embed/cJm1KDjr4-Y?autoplay=1&mute=1&loop=1";
+          
       } else {
+        
         document.getElementById("ytVideo").src =
           "https://www.youtube.com/embed/gM8s-Si1L74?autoplay=1&mute=1&loop=1";
       }
