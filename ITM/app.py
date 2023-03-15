@@ -266,7 +266,7 @@ def seletedCourse(courseName):
 @app.route("/playtask1/<courseName>",methods=['POST','GET'])
 def playtask1(courseName):
     if 'logged_in' in session:
-        global courseSelect,nowCourse
+        global courseSelect,nowCourse,stage
         setDefault()
         if(courseName == "ยืดเส้นยืดสายกายใจ"):
             courseSelect = 0
@@ -281,7 +281,7 @@ def playtask1(courseName):
 @app.route('/exercise',methods=['POST','GET'])
 def exercise():
     if 'logged_in' in session:
-        global count
+        global count,stage
         return render_template('count.html',count=count,nowCourse = nowCourse,stage = stage)
     else:
         return redirect('/')
