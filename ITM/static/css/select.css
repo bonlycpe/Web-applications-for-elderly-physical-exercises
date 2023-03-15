@@ -167,7 +167,7 @@
 }
 .select1 a{
     margin-right: 10px;
-    font-size: 50px;
+    font-size: 40px;
 }
 .about-content{
     display:flex;
@@ -178,7 +178,7 @@
     margin-left: 50px;
 }
 .about-head a{
-    font-size: 40px;
+    font-size: 36px;
 }
 .about-body li{
     font-size: 26px;

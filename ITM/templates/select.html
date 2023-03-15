@@ -36,7 +36,7 @@
           <div class="about-content" id="selectedCourse">
             <div class="about-head">
               {% for row in courseSelected %}
-              <a>Set {{row.0}}</a>
+              <a>คอร์ส {{row.0}}</a>
               {% endfor %}
             </div>
             <div class="about-body">
@@ -54,7 +54,7 @@
           <div class="select1">
             <button type="button" id="selectedCourseBox" value="{{row.0}}" class="set-img-btn">
               <div class="set-img" id="selectedBox" data-myval="{{row.0}}"></div>
-              <a>Set {{row.0}} (05:00 นาที)</a>
+              <a>คอร์ส {{row.0}} (05:00 นาที)</a>
             </button>
           </div>
           {% endfor %}

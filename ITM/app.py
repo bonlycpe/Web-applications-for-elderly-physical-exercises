@@ -161,12 +161,12 @@ def profile():
         cur = mysql.connection.cursor()
         cur.execute("select u.name,u.surname,u.age,u.height from users u where u.userID ="+str(session['userID']))
         fetchdata = cur.fetchall()
-        cur.execute("SELECT huc.score,huc.date from usercourse uc INNER join historyusercourse huc on huc.userCourseID=uc.userCourseID WHERE uc.userID=%s AND huc.date >= (SELECT ADDDATE(Current_date, INTERVAL -8 DAY)) AND huc.date <  (SELECT ADDDATE(Current_date, INTERVAL 1 DAY))order by huc.date;",str(session['userID']))
+        cur.execute("SELECT sum(huc.timer)/60,huc.date from usercourse uc INNER join historyusercourse huc on huc.userCourseID=uc.userCourseID WHERE uc.userID=%s AND huc.date >= (SELECT ADDDATE(Current_date, INTERVAL -8 DAY)) AND huc.date <  (SELECT ADDDATE(Current_date, INTERVAL 1 DAY)) group by huc.date  order by huc.date;",str(session['userID']))
         data = cur.fetchall()
         cur.close()
         labels  = [row[1].strftime('%m/%d/%Y') for row in data]
         data = [row[0] for row in data]
-        
+        # return jsonify(type(data))
         return render_template('profile.html',user=fetchdata , labels = labels , data = data)
     else:
         return redirect('/')
@@ -266,13 +266,12 @@ def seletedCourse(courseName):
 @app.route("/playtask1/<courseName>",methods=['POST','GET'])
 def playtask1(courseName):
     if 'logged_in' in session:
-        global courseSelect,nowCourse,status
-        status = 0
+        global courseSelect,nowCourse
         setDefault()
-        if(courseName == "AB"):
+        if(courseName == "ยืดเส้นยืดสายกายใจ"):
             courseSelect = 0
             nowCourse = course[courseSelect][status]
-        elif (courseName == "CD"):
+        elif (courseName == "เบาสบายกายขยับ"):
             courseSelect = 1
             nowCourse = course[courseSelect][status]
         return render_template('play.html',courseName=courseName,count = count,nowCourse = nowCourse) 
@@ -293,29 +292,26 @@ def result(courseName):
     if 'logged_in' in session:
         min = 0
         sec = elapsed_time
-        saveScore = score
         if elapsed_time >=60 :
             min = math.floor(elapsed_time/60)
-            sec = elapsed_time - math.floor(60*min)
+            sec = elapsed_time - math.floor(elapsed_time*min)
         cur = mysql.connection.cursor()
         cur.execute("select distinct c.courseID from course c inner join posture p on p.postureID=c.posture1ID or p.postureID=c.posture2ID where c.name='"+str(courseName)+"'")
         courseSelected = cur.fetchall()
-        cur.execute("select distinct uc.userCourseID from usercourse uc where uc.userID='"+str(session['userID'])+"' and uc.courseID='"+str(courseSelected[0][0])+"'")
+        cur.execute("select max(uc.userCourseID) from usercourse uc where uc.userID='"+str(session['userID'])+"' and uc.courseID='"+str(courseSelected[0][0])+"'")
         userCourse = cur.fetchall()
         value = (str(userCourse[0][0]),score,elapsed_time)
         cur.execute("INSERT INTO historyusercourse(userCourseID,score,timer) VALUES(%s,%s,%s)", value)
         mysql.connection.commit()
         cur.close()
-        setDefault()
-        return render_template('result.html',score = saveScore,min = min,sec = math.floor(sec))
+        return render_template('result.html',score = score,min = min,sec = math.floor(sec))
     else:
         return redirect('/')
 
-modelHandUp=pickle.load(open(r"model/handup_model.pkl", 'rb'))
-modelWaistFeetAndLegRaises=pickle.load(open(r"model/waistFeetAndLegRaises.pkl", 'rb'))
-modelStompingAndBent=pickle.load(open(r"model/stompingAndBent.pkl", 'rb'))
-modelStretchOutAndStepBack=pickle.load(open(r"model/stretchOutAndStepBack.pkl", 'rb'))
-modelFistAndStride=pickle.load(open(r"model/fistAndStride.pkl", 'rb'))
+
+modelHandUp=pickle.load(open("model/handup_model.pkl", 'rb'))
+modelstompingAndBent=pickle.load(open("model/stompingAndBent.pkl", 'rb'))
+modelfistAndStride=pickle.load(open("model/fistAndStride.pkl", 'rb'))
 
 # Grabbing the Holistic Model from Mediapipe and
 mp_holistic = mp.solutions.holistic
@@ -332,12 +328,19 @@ mp_drawing_styles = mp.solutions.drawing_styles
 
 def calculateScore():
     global elapsed_time,score
-    if(elapsed_time<=360):
-        score = 3
-    elif(elapsed_time>360 and elapsed_time<=600):
-        score = 2
-    else: 
-        score = 1
+#     if(elapsed_time<=360):
+#         score = 3
+#     elif(elapsed_time>360 and elapsed_time<=600):
+#         score = 2
+#     else: 
+#         score = 1
+    if(score==0):
+        if(elapsed_time<=20):
+            score = 3
+        elif(elapsed_time>20 and elapsed_time<=25):
+            score = 2
+        else: 
+            score = 1
 
 def setZero():
     global stage,step,count,status
@@ -357,14 +360,13 @@ def setDefault():
     restStage = True
     start_time = time.time()
 
+
 # Course
-#courseA = ["LagRaises","rest","StompingAndBent","end"]
-courseA = ["waistRaises","rest","stompingAndBent","end"]
-courseB = ["fistAndStride","rest","stretchAndBack","end"]
+courseA = ["stompingAndBent","rest","fistAndStride","end"]
+courseB = ["handUpA","rest","handUpB","end"]
 course = [courseA,courseB]
 
 # initialize the golbal value
-courseSelect = 0
 status = 0
 stage = 1
 step = 1
@@ -372,10 +374,11 @@ count = 0
 elapsed_time = 0
 score = 0
 restStage = True
-#mpModel=[modelLagRaises,modelStompingAndBent,modelHandUp,modelHandUp]
-mpModel=[modelWaistFeetAndLegRaises,modelStompingAndBent,modelFistAndStride,modelStretchOutAndStepBack]
+mpModel=[modelstompingAndBent,modelfistAndStride,modelHandUp,modelHandUp]
 countGoal = [2,10,15]
 start_time = time.time()
+
+courseSelect = 1
 
 # set course
 nowCourse = course[courseSelect][status]
@@ -398,8 +401,6 @@ def gen():
 
         # resizing the frame
         frame = cv2.resize(frame, (860,645))
-
-        frame = cv2.flip(frame, 1)
 
         # Converting the from BGR to RGB
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -435,16 +436,6 @@ def gen():
             model = mpModel[3]
         else:
             pass
-        
-        # personal box
-        # represents the top left corner of rectangle 
-        start_point = (200, 10)
-
-        # represents the bottom right corner of rectangle
-        end_point = (680, 630)
-
-        # Line thickness of 2 px
-        thickness = 4
 
         try:
             pose = results.pose_landmarks.landmark
@@ -494,72 +485,73 @@ def gen():
                 if(count==countGoal[0]):
                     setZero()
                     nowCourse=course[courseSelect][status]
-                if(stage == 1 and predict_class=="wflr1" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.35):
-                    if(step==1):
-                        stage = 2
-                    elif(step==2):
-                        stage = 3
-                elif(stage == 2 and predict_class=="wflr2" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.35):
-                    step=2
-                    stage = 1
-                elif(stage == 3 and predict_class=="wflr3" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.35):
+                if(stage == 1 and predict_class=="sab1" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.55):
+                    stage = 2
+                elif(stage == 2 and predict_class=="sab2" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.55):
                     count+=1
-                    step = 1
                     stage = 1
             elif(nowCourse==course[0][2]):
                 if(count==countGoal[0]):
                     # End here
-                    setZero()
                     nowCourse=course[courseSelect][status]
-                if(stage == 1 and predict_class=="sab1" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.35):
-                    stage = 2
-                elif(stage == 2 and predict_class=="sab2" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.35):
-                    count+=1
+                if(stage == 1 and predict_class=="fas1" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.7):
+                    if(step==1):
+                        stage = 2
+                    if(step==2):
+                        stage = 3
+                    if(step==3):
+                        count+=1
+                        step = 1
+                elif(stage == 2 and predict_class=="fas2" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.4):
+                    stage = 1
+                    step = 2
+                elif(stage == 3 and predict_class=="fas3" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.4):
+                    step = 3
                     stage = 1 
             # B course
             elif(nowCourse==course[1][0]):
                 if(count==countGoal[0]):
                     setZero()
                     nowCourse = course[courseSelect][status]
-                if(stage == 1 and predict_class=="fas1" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.35):
-                    if(step==1):
-                        stage = 2
-                    elif(step==2):
-                        stage = 3
-                elif(stage == 2 and predict_class=="fas2" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.35):
-                    step=2
-                    stage = 1
-                elif(stage == 3 and predict_class=="fas3" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.35):
+                if(stage == 1 and predict_class=="left_hand" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.75):
+                    stage = 2
+                elif(stage == 2 and predict_class=="right_hand" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.75):
                     count+=1
-                    step = 1
                     stage = 1
             elif(nowCourse==course[1][2]):
                 if(count==countGoal[0]):
                     # ending here
                     setZero()
                     nowCourse=course[courseSelect][status]
-                if(stage == 1 and predict_class=="ss1" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.35):
-                    if(step==1):
-                        stage = 2
-                    elif(step==2):
-                        stage = 3
-                elif(stage == 2 and predict_class=="ss2" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.35):
-                    step=2
-                    stage = 1
-                elif(stage == 3 and predict_class=="ss3" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.35):
+                if(stage == 1 and predict_class=="right_hand" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.75):
+                    stage = 2
+                elif(stage == 2 and predict_class=="left_hand" and round(predict_prob[np.argmax(predict_prob)],2) >= 0.75):
                     count+=1
-                    step = 1
                     stage = 1
+
+
+            # personal box
+            # represents the top left corner of rectangle 
+            start_point = (200, 10)
+
+            # represents the bottom right corner of rectangle
+            end_point = (680, 630)
+
+            # Blue color in BGR
+            color = (0,255,255)
+
+            # Line thickness of 2 px
+            thickness = 4
 
             # Using cv2.rectangle() method
             # Draw a rectangle with blue line borders of thickness of 2 px
-            cv2.rectangle(image, start_point, end_point, (0,255,255), thickness)
+            cv2.rectangle(image, start_point, end_point, color, thickness)
 
 
             # if you don't want to show any status comment from here ----------
             str_count = f"{nowCourse} + {count}"
             # Get status box
-            cv2.rectangle(image, (0,0), (500, 60), (255, 255, 255), -1)
+            cv2.rectangle(image, (0,0), (400, 60), (255, 255, 255), -1)
 
             # Display Count Sign
             cv2.putText(image, "[ Status ]"
@@ -571,28 +563,27 @@ def gen():
 
             # Display Class
             cv2.putText(image, 'CLASS'
-                        , (95,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (123, 45, 222), 1, cv2.LINE_AA)
+                        , (95,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
             cv2.putText(image, predict_class.split(' ')[0]
-                        , (90,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (123, 45, 222), 2, cv2.LINE_AA)
+                        , (90,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
 
             # Display Probability
             cv2.putText(image, 'PROB'
-                        , (15,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (123, 45, 222), 1, cv2.LINE_AA)
+                        , (15,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
             cv2.putText(image, str(round(predict_prob[np.argmax(predict_prob)],2))
-                        , (10,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (123, 45, 222), 2, cv2.LINE_AA)
+                        , (10,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
 
             # Display Timer
             cv2.putText(image, 'TIME'
-                        , (300,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (123, 45, 222), 1, cv2.LINE_AA)
+                        , (300,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
             cv2.putText(image, f"{int(elapsed_time)} Sec"
-                        , (350,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (123, 45, 222), 2, cv2.LINE_AA)
+                        , (250,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
 
             # to here ------
 
         except:
-            # Using cv2.rectangle() method
-            # Draw a rectangle with blue line borders of thickness of 2 px
-            cv2.rectangle(image, start_point, end_point, (0,0,255), thickness)
+            cv2.putText(image, str('Out Of Frame')
+                        , (210,150), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
 
         frame = cv2.imencode('.jpeg', image)[1].tobytes()
         yield (b'--frame\r\n'
