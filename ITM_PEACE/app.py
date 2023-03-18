@@ -1,17 +1,16 @@
 import numpy as np
-from flask import Flask, request, render_template, Response , jsonify, Blueprint , session, redirect, flash
+from flask import Flask, request, render_template, Response , jsonify , session, redirect, flash
 import jwt
 import re
 import math
 from flask_mysqldb import MySQL
-from datetime import datetime, timedelta , date
+from datetime import datetime, timedelta
 from functools import wraps
 import pickle
 import cv2
 import mediapipe as mp
 import pandas as pd
 import pickle 
-import joblib
 import time
 
 app = Flask(__name__)
@@ -29,8 +28,6 @@ mysql = MySQL(app)
 
 @app.route('/')
 def index():
-    error = None
-    session.clear();
     if not session.get('logged_in'):
         return render_template('login.html')
     else:
@@ -80,16 +77,6 @@ def login():
 def registerForm():
     return render_template('register.html')
 
-def checkUsername(username):
-    try:
-        cur = mysql.connection.cursor()
-        cur.execute("select u.username from users u where u.username ="+username)
-        fetchdata = cur.fetchall()
-        cur.close()
-        return True
-    except Exception:
-        return False
-
 @app.route('/register', methods=['POST','GET'])
 def register():
     mesage = ''
@@ -134,7 +121,6 @@ def logout():
     if 'logged_in' in session:
         session.pop('logged_in',None)
         session.pop('userID',None)
-    #return jsonify('logged_in' in session)
     return redirect("/", code=302)
 
 #Authen
@@ -238,8 +224,6 @@ def select():
 def seletedCourse(courseName):
     if 'logged_in' in session:
         cur = mysql.connection.cursor()
-        cur.execute("select distinct c.name from course c inner join posture p on p.postureID=c.posture1ID or p.postureID=c.posture2ID")
-        fetchdata = cur.fetchall()
         cur.execute("select distinct c.name,c.posture1ID,c.posture2ID,c.courseID from course c inner join posture p on p.postureID=c.posture1ID or p.postureID=c.posture2ID where c.name='"+str(courseName)+"'")
         courseSelected = cur.fetchall()
         cur.execute("select p.name from posture p where p.postureID="+str(courseSelected[0][1]))
@@ -254,19 +238,6 @@ def seletedCourse(courseName):
         return render_template('selectedCourse.html',courseSelected = courseSelected,courseNameSelected = courseNameSelected)
     else:
         return redirect('/')
-
-# @app.route("/preview/<courseName>",methods=['POST','GET'])
-# def preview(courseName):
-#     cur = mysql.connection.cursor()
-#     cur.execute("select distinct c.name,c.posture1ID,c.posture2ID from course c inner join posture p on p.postureID=c.posture1ID or p.postureID=c.posture2ID where c.name='"+str(courseName)+"'")
-#     courseSelected = cur.fetchall()
-#     cur.execute("select p.name from posture p where p.postureID="+str(courseSelected[0][1]))
-#     course1 = cur.fetchall()
-#     cur.execute("select p.name from posture p where p.postureID="+str(courseSelected[0][2]))
-#     course2 = cur.fetchall()
-#     cur.close()
-#     courseNameSelected = [course1[0],course2[0]]
-#     return render_template('preview.html',courseSelected = courseSelected,courseNameSelected = courseNameSelected)
 
 @app.route("/playtask1/<courseName>",methods=['POST','GET'])
 def playtask1(courseName):
@@ -381,7 +352,6 @@ def setDefault():
 
 
 # Course
-#courseA = ["LagRaises","rest","StompingAndBent","end"]
 courseA = ["waistRaises","rest","stompingAndBent","end"]
 courseB = ["fistAndStride","rest","stretchAndBack","end"]
 course = [courseA,courseB]
@@ -395,7 +365,6 @@ count = 0
 elapsed_time = 0
 score = 0
 restStage = True
-#mpModel=[modelLagRaises,modelStompingAndBent,modelHandUp,modelHandUp]
 mpModel=[modelWaistFeetAndLegRaises,modelStompingAndBent,modelFistAndStride,modelStretchOutAndStepBack]
 countGoal = [15,10,5,30]
 numCountGoal = 0
@@ -439,14 +408,6 @@ def gen():
 
         # Converting back the RGB image to BGR
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-
-        # # drawing skeleton
-        # mp_drawing.draw_landmarks(
-        #     image, 
-        #     results.pose_landmarks, 
-        #     mp_holistic.POSE_CONNECTIONS,   
-        #     landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style()
-        # )
 
         # model loader
         if(nowCourse==course[0][0]):
@@ -584,40 +545,6 @@ def gen():
             # Using cv2.rectangle() method
             # Draw a rectangle with blue line borders of thickness of 2 px
             cv2.rectangle(image, start_point, end_point, (0,255,0), 5)
-
-
-            # # if you don't want to show any status comment from here ----------
-            # str_count = f"{nowCourse} + {count}"
-            # # Get status box
-            # cv2.rectangle(image, (0,0), (500, 60), (255, 255, 255), -1)
-
-            # # Display Count Sign
-            # cv2.putText(image, "[ Status ]"
-            #             , (48,500), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 3, cv2.LINE_AA)
-
-            # # Display Count
-            # cv2.putText(image, str_count
-            #             , (48,570), cv2.FONT_HERSHEY_SIMPLEX, 2, (123, 45, 222), 5, cv2.LINE_AA)
-
-            # # Display Class
-            # cv2.putText(image, 'CLASS'
-            #             , (95,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (123, 45, 222), 1, cv2.LINE_AA)
-            # cv2.putText(image, predict_class.split(' ')[0]
-            #             , (90,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (123, 45, 222), 2, cv2.LINE_AA)
-
-            # # Display Probability
-            # cv2.putText(image, 'PROB'
-            #             , (15,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (123, 45, 222), 1, cv2.LINE_AA)
-            # cv2.putText(image, str(round(predict_prob[np.argmax(predict_prob)],2))
-            #             , (10,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (123, 45, 222), 2, cv2.LINE_AA)
-
-            # # Display Timer
-            # cv2.putText(image, 'TIME'
-            #             , (300,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (123, 45, 222), 1, cv2.LINE_AA)
-            # cv2.putText(image, f"{int(elapsed_time)} Sec"
-            #             , (350,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (123, 45, 222), 2, cv2.LINE_AA)
-
-            # # to here ------
 
         except:
             # Using cv2.rectangle() method
